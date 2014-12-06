@@ -4,10 +4,21 @@ var debug = require('debug')('server');
 var express = require('express');
 var io = require('socket.io')();
 var path = require('path');
+var redis = require('redis');
+var session = require('express-session');
+var sessionStore = require('connect-redis')(session);
 
 var routes = require('./routes/index');
 
 var app = express();
+var redisClient = redis.createClient();
+
+app.use(session({
+  secret: 'kashikoi kawaii erichika',
+  resave: false, // don't save session if unmodified
+  saveUninitialized: false, // don't create session until something stored
+  store: new sessionStore({ host: 'localhost', port: 6379, client: redisClient })
+}));
 
 app.use('/', routes);
 
