@@ -1,0 +1,41 @@
+a.wrapper {
+  margin-top: 70px;
+  display: block;
+  text-decoration: none;
+  color: @gray;
+  height: 50px;
+  position: relative;
+
+  div {
+    position: absolute;
+    height: 50px;
+    line-height: 50px;
+    top: 0;
+    font-size: 1.2rem;
+    font-weight: 100;
+
+    &.left {
+      right: 50%;
+      .transform(translateX(-30px));
+    }
+    &.right {
+      left: 50%;
+      .transform(translateX(30px));
+    }
+  }
+
+  img {
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    .border-radius(25px);
+    .opacity(0.7);
+    .transition(.1s linear opacity);
+  }
+
+  &:hover img {
+    .opacity(0.9);
+  }
+}

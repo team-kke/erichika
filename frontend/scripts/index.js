@@ -3,6 +3,7 @@
 var React = require('react/addons')
   , Game = require('./components/game')
   , Signin = require('./components/signin')
+  , Footer = require('./components/footer')
   , request = require('superagent');
 
 var App = React.createClass({
@@ -31,6 +32,7 @@ var App = React.createClass({
     return (
       <div>
         {content}
+        <Footer />
       </div>
     );
   }
