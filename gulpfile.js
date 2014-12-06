@@ -30,7 +30,7 @@ gulp.task('back:lint', function () {
 
 // Frontend Tasks
 
-var isDist = process.argv.indexOf('serve') === -1;
+var isDist = process.argv.indexOf('build') !== -1;
 
 gulp.task('front:js', ['front:lint', 'front:clean:js'], function () {
    var browserified = transform(function (filename) {
