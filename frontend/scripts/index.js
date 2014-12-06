@@ -1,6 +1,8 @@
 "use strict";
 
-var React = require('react/react-with-addons')
+require('./bootstrap');
+
+var React = require('react/addons')
   , Signin = require('./components/signin')
   , Socket = require('./socket');
 

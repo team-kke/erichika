@@ -6,10 +6,10 @@ var gulp = require('gulp')
   , csso = require('gulp-csso')
   , eslint = require('gulp-eslint')
   , filter = require('gulp-filter')
+  , less = require('gulp-less')
   , nodemon = require('gulp-nodemon')
   , rimraf = require('gulp-rimraf')
   , rename = require('gulp-rename')
-  , stylus = require('gulp-stylus')
   , transform = require('vinyl-transform')
   , through = require('through')
   , uglify = require('gulp-uglify');
@@ -36,7 +36,6 @@ gulp.task('front:js', ['front:lint', 'front:clean:js'], function () {
    var browserified = transform(function (filename) {
      var b = browserify(filename);
      b.transform('reactify');
-     b.transform('debowerify');
      return b.bundle();
    });
 
@@ -49,10 +48,9 @@ gulp.task('front:js', ['front:lint', 'front:clean:js'], function () {
 });
 
 gulp.task('front:css', ['front:clean:css'], function () {
-  return gulp.src('frontend/styles/index.styl')
-    .pipe(stylus({
-      'include css': true,
-      'paths': ['./node_modules', './bower_components']
+  return gulp.src('frontend/styles/index.less')
+    .pipe(less({
+      paths: ['./node_modules']
     }))
     .pipe(isDist ? csso() : through())
     .pipe(rename('build.css'))

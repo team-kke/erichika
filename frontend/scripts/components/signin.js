@@ -1,12 +1,13 @@
 "use strict";
 
-var React = require('react/react-with-addons');
+var React = require('react/addons');
 
 var SigninComponent = React.createClass({
   render: function () {
     return (
-      <div id='sign-in'>
+      <div id='signin'>
         <h1>hello, world!</h1>
+        <button className="btn btn-primary">hi</button>
       </div>
     );
   }
