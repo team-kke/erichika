@@ -1,5 +1,10 @@
-@import "bootstrap-material/less/material-wfont";
-@import "bootstrap-material/less/ripples";
+@import (inline) "normalize.css/normalize.css";
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300);
+
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4 {
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
 
 #app {
   #signin { @import "signin"; }
