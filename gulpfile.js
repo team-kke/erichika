@@ -16,7 +16,7 @@ var gulp = require('gulp')
 // Backend Tasks
 
 gulp.task('back:run', ['back:lint'], function () {
-  nodemon({script: 'backend/index.js', ext: 'js', watch: 'backend'})
+  nodemon({script: 'backend/index.js', ext: 'js', watch: 'back:run'})
     .on('change', ['lint:backend']);
 });
 
@@ -30,12 +30,6 @@ gulp.task('back:lint', function () {
 // Frontend Tasks
 
 var isDist = process.argv.indexOf('serve') === -1;
-
-gulp.task('front:html', ['front:clean:html'], function () {
-  return gulp.src('frontend/index.html')
-    .pipe(gulp.dest('out'))
-    .pipe(connect.reload());
-});
 
 gulp.task('front:js', ['front:lint', 'front:clean:js'], function () {
    var browserified = transform(function (filename) {
@@ -70,11 +64,6 @@ gulp.task('front:clean', function () {
     .pipe(rimraf());
 });
 
-gulp.task('front:clean:html', function () {
-  return gulp.src('out/index.html')
-    .pipe(rimraf());
-});
-
 gulp.task('front:clean:js', function () {
   return gulp.src('out/js/*')
     .pipe(rimraf());
@@ -93,7 +82,6 @@ gulp.task('front:connect', ['front:build'], function () {
 });
 
 gulp.task('front:watch', function () {
-  gulp.watch(['frontend/index.html'], ['front:html']);
   gulp.watch(['frontend/scripts/**/*'], ['front:js']);
   gulp.watch(['frontend/styles/**/*.styl'], ['front:css']);
 });
@@ -106,9 +94,10 @@ gulp.task('front:lint', function () {
 });
 
 gulp.task('front:serve', ['front:connect', 'front:watch']);
-gulp.task('front:build', ['front:clean', 'front:html', 'front:js', 'front:css']);
+gulp.task('front:build', ['front:clean', 'front:js', 'front:css']);
 
 // Common Tasks
 
 gulp.task('lint', ['back:lint', 'front:lint']);
+gulp.task('run', ['back:run', 'front:serve']);
 gulp.task('default', ['lint', 'front:build']);
