@@ -2,6 +2,7 @@
 
 var debug = require('debug')('server');
 var express = require('express');
+var path = require('path');
 
 var routes = require('./routes/index');
 
@@ -10,6 +11,7 @@ var app = express();
 app.use('/', routes);
 
 app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'views'));
 
 var server = app.listen(process.env.PORT || 3000, function () {
   var host = server.address().address;
