@@ -23,6 +23,7 @@ var server = app.listen(process.env.PORT || 3000, function () {
 
 io.attach(server);
 
+// TODO: move these lines to separated file.
 io.on('connection', function (socket) {
   debug('+1 socket connection');
   io.emit('test', { message: 'Hey, everyone! +1 connection' });
