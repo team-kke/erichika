@@ -1,0 +1,29 @@
+@import url(http://fonts.googleapis.com/css?family=Lato:100,300);
+
+@import "mixins";
+
+@whiter: #fff;
+@white: #efefef;
+
+// Eri colors
+@black: #323345;
+@blue: #3354b5;
+@lightblue: #a4c2fe;
+@green: #31af89;
+@yellow: #f3df89;
+
+html, body {
+  background-color: @white;
+  color: @black;
+  font-size: 17px;
+}
+
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4 {
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+@import "components/button";
+@import "components/input";
+
+.marg-r1 { margin-right: 1px !important; }

@@ -7,9 +7,10 @@ var SigninComponent = React.createClass({
     return (
       <div id='signin'>
         <h1 className='logo'>ERICHIKA</h1>
-        <form action='/login' method='post' className='form-horizontal'>
-          <input placeholder='Username (TODO)' type='text' name='username' />
-          <button type='submit'>Sign In</button>
+        <form action='/login' method='post' autoComplete='off'>
+          <input className='text text-lg marg-r1'
+                 placeholder='Username' type='text' name='username' />
+          <button className='btn btn-lg' type='submit'>Sign In</button>
         </form>
       </div>
     );
