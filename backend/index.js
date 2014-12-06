@@ -8,19 +8,19 @@ var io = require('socket.io')();
 var path = require('path');
 var redis = require('redis');
 var session = require('express-session');
-var sessionStore = require('connect-redis')(session);
+var RedisStore = require('connect-redis')(session);
 
 var routes = require('./routes/index');
 
 var app = express();
-var redisClient = redis.createClient();
 
 var sessionSecret = 'kashikoi kawaii erichika';
+var sessionStore = new RedisStore({client: redis.createClient()});
 app.use(session({
   secret: sessionSecret,
-  resave: false, // if false, don't save session if unmodified
-  saveUninitialized: true, // if false, don't create session until something stored
-  store: new sessionStore({ host: 'localhost', port: 6379, client: redisClient })
+  resave: false,
+  saveUninitialized: true,
+  store: sessionStore
 }));
 
 app.use(bodyParser.json());
@@ -45,14 +45,20 @@ var cookieParserWithSecret = cookieParser(sessionSecret);
 io.on('connection', function (socket) {
   debug('+1 socket connection');
   cookieParserWithSecret(socket.handshake, {}, function () {
-    debug('sessionID: %s', socket.handshake.signedCookies['connect.sid']);
-  });
+    var sid = socket.handshake.signedCookies['connect.sid'];
+    sessionStore.get(sid, function (err, data) {
+      if (err || !data) {
+        socket.disconnect();
+        return;
+      }
 
-  io.emit('test', { message: 'Hey, everyone! +1 connection' });
-  socket.on('test', function (data) {
-    debug('received: %s', data);
-  });
-  socket.on('disconnect', function () {
-    debug('-1 socket connection');
+      io.emit('test', { message: 'Hey, everyone! +1 connection' });
+      socket.on('test', function (data) {
+        debug('received: %s', data);
+      });
+      socket.on('disconnect', function () {
+        debug('-1 socket connection');
+      });
+    });
   });
 });
