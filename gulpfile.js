@@ -16,8 +16,8 @@ var gulp = require('gulp')
 // Backend Tasks
 
 gulp.task('back:run', ['back:lint'], function () {
-  nodemon({script: 'backend/index.js', ext: 'js', watch: 'back:run'})
-    .on('change', ['lint:backend']);
+  nodemon({script: 'backend/index.js', ext: 'js', watch: 'backend'})
+    .on('change', ['back:lint']);
 });
 
 gulp.task('back:lint', function () {
