@@ -35,3 +35,6 @@ bower_components
 
 # Built frontend sources
 /out
+
+# Swp files
+*.swp
