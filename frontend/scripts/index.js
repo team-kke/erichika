@@ -1,28 +1,38 @@
 "use strict";
 
 var React = require('react/addons')
+  , Game = require('./components/game')
   , Signin = require('./components/signin')
-  , Socket = require('./socket');
+  , request = require('superagent');
 
 var App = React.createClass({
-  socket: new Socket(),
   getInitialState: function () {
-    // FIXME: check if it's signed in
     return {signedIn: false};
   },
   componentDidMount: function () {
-    this.socket.connect();
-    this.socket.on('connect', function () {
-      console.log('hello, socket!');
-    });
+    var that = this;
+    request
+      .get('/login')
+      .type('json')
+      .end(function (res) {
+        if (res.status === 200) {
+          that.setState({signedIn: res.body.login});
+        }
+      });
   },
   render: function () {
+    var content;
     if (this.state.signedIn) {
-      // FIXME: game
-      return null;
+      content = <Game />;
     } else {
-      return <Signin />;
+      content = <Signin />;
     }
+
+    return (
+      <div>
+        {content}
+      </div>
+    );
   }
 });
 

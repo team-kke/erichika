@@ -34,6 +34,7 @@
     "normalize.css": "^3.0.2",
     "react": "^0.12.1",
     "reactify": "^0.17.1",
+    "superagent": "^0.21.0",
     "through": "^2.3.6",
     "vinyl-transform": "^1.0.0"
   },
