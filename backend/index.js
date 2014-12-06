@@ -1,6 +1,7 @@
 "use strict";
 
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var debug = require('debug')('server');
 var express = require('express');
 var io = require('socket.io')();
@@ -14,8 +15,9 @@ var routes = require('./routes/index');
 var app = express();
 var redisClient = redis.createClient();
 
+var sessionSecret = 'kashikoi kawaii erichika';
 app.use(session({
-  secret: 'kashikoi kawaii erichika',
+  secret: sessionSecret,
   resave: false, // if false, don't save session if unmodified
   saveUninitialized: true, // if false, don't create session until something stored
   store: new sessionStore({ host: 'localhost', port: 6379, client: redisClient })
@@ -38,9 +40,14 @@ var server = app.listen(process.env.PORT || 3000, function () {
 
 io.attach(server);
 
+var cookieParserWithSecret = cookieParser(sessionSecret);
 // TODO: move these lines to separated file.
 io.on('connection', function (socket) {
   debug('+1 socket connection');
+  cookieParserWithSecret(socket.handshake, {}, function () {
+    debug('sessionID: %s', socket.handshake.signedCookies['connect.sid']);
+  });
+
   io.emit('test', { message: 'Hey, everyone! +1 connection' });
   socket.on('test', function (data) {
     debug('received: %s', data);

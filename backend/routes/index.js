@@ -5,6 +5,7 @@ var router = express.Router();
 
 router.get('/', function (req, res) {
   // FIXME: Parse from somewhere else
+  console.log('session id: ' + req.sessionID);
   var frontendRoot = '//localhost:8080';
   res.render('index', {frontendRoot: frontendRoot});
 });
