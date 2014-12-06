@@ -40,7 +40,7 @@ gulp.task('front:js', ['front:lint', 'front:clean:js'], function () {
      return b.bundle();
    });
 
-  return gulp.src('frontend/scripts/index.jsx')
+  return gulp.src('frontend/scripts/index.js')
     .pipe(browserified)
     .pipe(isDist ? uglify() : through())
     .pipe(rename('build.js'))
