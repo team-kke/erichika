@@ -38,6 +38,7 @@
   "dependencies": {
     "debug": "^2.1.0",
     "express": "^4.10.4",
-    "jade": "^1.8.1"
+    "jade": "^1.8.1",
+    "socket.io": "^1.2.1"
   }
 }
