@@ -1,5 +1,6 @@
 "use strict";
 
+var bodyParser = require('body-parser');
 var debug = require('debug')('server');
 var express = require('express');
 var io = require('socket.io')();
@@ -15,10 +16,13 @@ var redisClient = redis.createClient();
 
 app.use(session({
   secret: 'kashikoi kawaii erichika',
-  resave: false, // don't save session if unmodified
-  saveUninitialized: false, // don't create session until something stored
+  resave: false, // if false, don't save session if unmodified
+  saveUninitialized: true, // if false, don't create session until something stored
   store: new sessionStore({ host: 'localhost', port: 6379, client: redisClient })
 }));
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', routes);
 

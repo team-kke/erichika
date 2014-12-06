@@ -9,4 +9,20 @@ router.get('/', function (req, res) {
   res.render('index', {frontendRoot: frontendRoot});
 });
 
+router.post('/login', function (req, res) {
+  // TODO: check if login information is valid
+  var valid = true;
+  if (valid) {
+    req.session.username = req.body.username;
+  }
+  res.redirect('/');
+})
+.get('/login', function (req, res) {
+  if (req.session.username === undefined) {
+    res.json({ login: false });
+  } else {
+    res.json({ login: true });
+  }
+});
+
 module.exports = router;
