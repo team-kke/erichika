@@ -82,7 +82,7 @@ gulp.task('front:connect', ['front:build'], function () {
 
 gulp.task('front:watch', function () {
   gulp.watch(['frontend/scripts/**/*'], ['front:js']);
-  gulp.watch(['frontend/styles/**/*.styl'], ['front:css']);
+  gulp.watch(['frontend/styles/**/*'], ['front:css']);
 });
 
 gulp.task('front:lint', function () {
