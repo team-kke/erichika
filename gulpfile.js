@@ -5,6 +5,7 @@ var gulp = require('gulp')
   , connect = require('gulp-connect')
   , csso = require('gulp-csso')
   , eslint = require('gulp-eslint')
+  , filter = require('gulp-filter')
   , nodemon = require('gulp-nodemon')
   , rimraf = require('gulp-rimraf')
   , rename = require('gulp-rename')
@@ -88,6 +89,7 @@ gulp.task('front:watch', function () {
 
 gulp.task('front:lint', function () {
   return gulp.src('frontend/scripts/**/*')
+    .pipe(filter(['*', '!frontend/scripts/libs/*']))
     .pipe(eslint({configFile: '.eslintrc.frontend'}))
     .pipe(eslint.format())
     .pipe(eslint.failOnError());
