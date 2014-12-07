@@ -27,12 +27,15 @@ Team.prototype.push = function (username) {
   this.confirmed[username] = false;
 };
 
-Team.prototype.move = function (src, dest) {
+Team.prototype.move = function (src, dest, resetConfirm) {
   verbose('Team.move(%s, %s)', src, dest);
   var index = src.indexOf(this);
   if (index > -1) {
-    // reset confirm count roughly.
-    this.confirmed = {};
+    if (resetConfirm) {
+      for (var k in this.confirmed) {
+        this.confirmed[k] = false;
+      }
+    }
 
     src.splice(index, 1);
     verbose('Team.move(%s, %s), remove team from src', src, dest);
@@ -135,7 +138,7 @@ function exit() {
       if (isWaitingPlayer || isWaitingConfirm) {
         team.removeUser(username);
         if (isWaitingConfirm) {
-          team.move(teams.waitConfirm, teams.waitPlayer);
+          team.move(teams.waitConfirm, teams.waitPlayer, true);
         }
         updateClient(team, 'wait-player');
       } else {
@@ -196,7 +199,7 @@ function disconnect() {
         updateClient(team, 'wait-player');
         if (isWaitingConfirm) {
           verbose('user disconnected was in the team waiting confirm.. this team goes waiting players again ');
-          team.move(teams.waitConfirm, teams.waitPlayer);
+          team.move(teams.waitConfirm, teams.waitPlayer, true);
         }
       }
     }
