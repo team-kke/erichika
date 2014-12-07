@@ -118,9 +118,36 @@ function confirm() {
 function dodge() {
 }
 
+function disconnect() {
+  var username = this.socket.username;
+  verbose('disconnect. %s', username);
+
+  var index = queue.indexOf(username);
+  if (index > -1) {
+    queue.splice(index, 1);
+  }
+
+  if (user[username]) {
+    var team = user[username].team;
+    if (team) {
+      var isWaitingPlayer = teams.waitPlayer.indexOf(team) > -1;
+      var isWaitingConfirm = teams.waitConfirm.indexOf(team) > -1;
+      if (isWaitingPlayer || isWaitingConfirm) {
+        team.removeUser(username);
+        updateClient(team, 'wait-player');
+        if (isWaitingConfirm) {
+          verbose('user disconnected was in the team waiting confirm.. this team goes waiting players again ');
+          team.move(teams.waitConfirm, teams.waitPlayer);
+        }
+      }
+    }
+  }
+}
+
 module.exports = generate({
   'queue/join': { name: 'join', function: join },
   'queue/exit': { name: 'exit', function: exit },
   'queue/confirm': { name: 'confirm', function: confirm },
-  'queue/dodge': { name: 'dodge', function: dodge }
+  'queue/dodge': { name: 'dodge', function: dodge },
+  'disconnect': { name: 'disconnect', function: disconnect }
 });
