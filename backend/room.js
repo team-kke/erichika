@@ -5,10 +5,23 @@ var Room = function (name) {
   this.sockets = [];
 };
 
-Room.prototype.join = function (socket) {
+Room.prototype.push = function (socket) {
   if (this.sockets.indexOf(socket) < 0) {
     this.sockets.push(socket);
   }
+};
+
+Room.prototype.remove = function (socket) {
+  var idx = this.sockets.indexOf(socket);
+  if (idx < 0) {
+    return false;
+  }
+  this.sockets.splice(idx, 1);
+  return true;
+};
+
+Room.prototype.join = function (socket) {
+  this.push(socket);
   this.emit(this.name + '/join', {username: socket.username});
   socket.on('disconnect', function () {
     this.leave(socket);
@@ -16,12 +29,9 @@ Room.prototype.join = function (socket) {
 };
 
 Room.prototype.leave = function (socket) {
-  var idx = this.sockets.indexOf(socket);
-  if (idx < 0) {
-    return;
+  if (this.remove(socket)) {
+    this.emit(this.name + '/leave', {username: socket.username});
   }
-  this.sockets.splice(idx, 1);
-  this.emit(this.name + '/leave', {username: socket.username});
 };
 
 Room.prototype.emit = function (eventName, data, handler) {
@@ -49,3 +59,4 @@ RoomSet.prototype.get = function (name) {
 };
 
 module.exports = new RoomSet();
+module.exports.Room = Room;
