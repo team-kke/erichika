@@ -6,7 +6,7 @@ var verbose = require('debug')('verbose:game');
 
 function Game(id, users, room) {
   verbose('Game() constructor called with users: [%s]', users.map(function (user) {
-    return user.name;
+    return user.username;
   }));
 
   // TODO:validate users.length
@@ -33,7 +33,7 @@ function updateClient(game) {
   }, function (socket, data) {
     // TODO: check 'current' true
     data.ours.users.forEach(function (user) {
-      user.me = user.name === socket.username;
+      user.me = user.username === socket.username;
     });
   });
 }
@@ -41,7 +41,7 @@ function updateClient(game) {
 function startGame(context) {
   var game = new Game(count, context.team.members.map(function (username) {
     return {
-      name: username,
+      username: username,
       me: false,
       current: false
     };
