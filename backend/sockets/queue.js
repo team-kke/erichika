@@ -1,5 +1,6 @@
 "use strict";
 
+var error = require('debug')('error');
 var generate = require('./base');
 var room = require('../room');
 var verbose = require('debug')('verbose:queue');
@@ -21,6 +22,7 @@ Team.prototype.push = function (username) {
   var socket = user[username].socket;
   this.room.push(socket);
   this.members.push(username);
+  user[username].team = this;
 };
 
 Team.prototype.move = function (src, dest) {
@@ -31,6 +33,16 @@ Team.prototype.move = function (src, dest) {
     if (dest) {
       dest.push(this);
     }
+  }
+};
+
+Team.prototype.removeUser = function (username) {
+  verbose('Team.removeUser(%s)', username);
+  var index = this.members.indexOf(username);
+  if (index > -1) {
+    this.members.splice(index, 1);
+    this.room.remove(user[username].socket);
+    user[username].team = null;
   }
 };
 
@@ -83,6 +95,21 @@ function join() {
 }
 
 function exit() {
+  var username = this.socket.username;
+  verbose('queue/exit, username: %s', username);
+  var team = user[username].team;
+
+  var isWaitingPlayer = teams.waitPlayer.indexOf(team) > -1;
+  var isWaitingConfirm = teams.waitConfirm.indexOf(team) > -1;
+  if (isWaitingPlayer || isWaitingConfirm) {
+    team.removeUser(username);
+    if (isWaitingConfirm) {
+      updateClient(team, 'wait-player');
+      team.move(teams.waitConfirm, teams.waitPlayer);
+    }
+  } else {
+    error('queue/exit, abnormal state');
+  }
 }
 
 function confirm() {
