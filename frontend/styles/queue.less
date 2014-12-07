@@ -13,6 +13,25 @@
   background-color: @whiter;
 }
 
+.check {
+  width: 30px;
+  height: 30px;
+  margin-top: 9px;
+  background-color: @blue;
+  color: @whiter;
+  float: left;
+  line-height: 30px;
+  text-align: center;
+
+  .border-radius(100%);
+  .animation(scaleout, 1.0s, infinite, ease-in-out);
+}
+
+&:hover .check {
+  color: @blue;
+  background-color: @whiter;
+}
+
 @-webkit-keyframes scaleout {
   0% { -webkit-transform: scale(0.0) }
   100% {
@@ -42,9 +61,6 @@
 
   .queueing {
     .opacity(1);
-    .count {
-      margin-left: 3px;
-    }
   }
   .cancel {
     position: absolute;
@@ -62,7 +78,33 @@
   .opacity(1);
 }
 
-&.queue:hover {
+&.queue:hover, &.dodge:hover {
   background-color: @red;
   color: @whiter;
+}
+
+&.confirm {
+  color: @blue;
+}
+&.confirm:hover {
+  background-color: @blue;
+  color: @whiter;
+}
+
+&.text:hover {
+  background-color: @whiter;
+  cursor: default;
+}
+
+&.confirmed {
+  color: @blue;
+  &:hover {
+    background-color: @whiter;
+    cursor: default;
+
+    .check {
+      color: @white;
+      background-color: @blue;
+    }
+  }
 }
