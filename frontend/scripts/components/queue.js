@@ -114,7 +114,7 @@ var QueueComponent = React.createClass({
     e.preventDefault();
   },
   dodge: function (e) {
-    this.setState({queueState: Queueing});
+    this.setState({queueState: Normal});
     this.props.socket.emit('queue/dodge');
     e.preventDefault();
   }
