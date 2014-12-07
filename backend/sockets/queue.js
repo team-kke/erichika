@@ -61,7 +61,7 @@ function updateClient(team, state) {
         return v;
       }).length;
   } else {
-    error('queue/update, abnormal state);
+    error('queue/update, abnormal state');
     return;
   }
 
