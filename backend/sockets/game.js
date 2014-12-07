@@ -8,8 +8,11 @@ function Game(id, users) {
     return user.name;
   }));
 
+  // TODO:validate users.length
+
   this.id = id;
-  this.users = users;
+  this.ours = users.splice(0, 3);
+  this.opponents = users;
 }
 
 var games = {};
@@ -23,10 +26,13 @@ function updateClient(game) {
   verbose('game/update');
 
   game.room.emit('game/update', {
-    users: game.members
+    ours: game.ours,
+    opponents: game.opponents
   }, function (socket, data) {
     // TODO: check 'current' true
-    data.me = socket.username === data.name;
+    data.ours.forEach(function (user) {
+      user.me = user.name === socket.username;
+    });
   });
 }
 
