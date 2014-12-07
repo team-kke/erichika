@@ -1,13 +1,31 @@
 ul.user-list {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  height: 519px;
+  background-color: @whiter;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   li.user {
     color: @black;
+    padding: 3px 10px;
+    cursor: default;
 
     &.me {
       color: @green;
     }
+
+    &:hover {
+      background-color: @lightblue;
+    }
   }
+}
+
+div.description {
+  height: 24px;
+  line-height: 24px;
+  padding: 3px 10px;
+  margin-top: 1px;
+  background-color: @whiter;
+  color: @green;
 }

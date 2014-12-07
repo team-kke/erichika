@@ -13,9 +13,12 @@ var UserList = React.createClass({
     });
 
     return (
-      <ul className='user-list'>
-        {list}
-      </ul>
+      <div>
+        <ul className='user-list'>
+          {list}
+        </ul>
+        <div className='description'>{this.props.data.length} user(s)</div>
+      </div>
     );
   }
 });
