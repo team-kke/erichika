@@ -20,6 +20,7 @@
     "node": "0.10.26"
   },
   "devDependencies": {
+    "brace": "^0.4.0",
     "browserify": "^6.3.3",
     "gulp": "^3.8.10",
     "gulp-connect": "^2.2.0",

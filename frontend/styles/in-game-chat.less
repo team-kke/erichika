@@ -1,0 +1,83 @@
+ul.user-list {
+  margin: 0;
+  padding: 0;
+  height: 58px;
+  background-color: @whiter;
+  overflow: hidden;
+
+  li.user {
+    display: inline-block;
+    width: 50%;
+    height: 27px;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: @black;
+    padding: 3px 10px;
+    cursor: default;
+    background-color: @whiter;
+    .transition(.1s linear background-color);
+
+    &.me {
+      color: @green;
+    }
+
+    &:hover {
+      background-color: @lightblue;
+    }
+  }
+}
+
+.chat-room {
+  margin-top: 1px;
+
+  ul.log {
+    margin: 0;
+    padding: 0;
+    height: 460px;
+    background-color: @whiter;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    li {
+      box-sizing: border-box;
+      display: block;
+      padding: 3px 5px;
+
+      .info {
+        span.username {
+          font-weight: bold;
+          font-size: 1.1rem;
+        }
+
+        span.datetime {
+          margin: 0 5px;
+          font-size: 0.8rem;
+          color: @gray;
+        }
+      }
+
+      .text {
+        margin-left: 5px;
+        word-wrap: break-word;
+      }
+
+      &.me .username {
+        color: @green;
+      }
+    }
+  }
+
+  input.chat-input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border: none;
+    height: 30px;
+    line-height: 24px;
+    padding: 3px 5px;
+    margin-top: 1px;
+    background-color: @whiter;
+    color: @black;
+  }
+}

@@ -1,0 +1,42 @@
+.nav {
+  background-color: @whiter;
+  height: 49px;
+  margin-bottom: 1px;
+
+  a.button {
+    display: block;
+    text-decoration: none;
+    height: 49px;
+    line-height: 49px;
+    padding: 0 10px;
+    background-color: @whiter;
+    color: @black;
+    .transition(.1s linear background-color);
+
+    &:hover {
+      background-color: @lightblue;
+    }
+
+    &.left {
+      float: left;
+    }
+    &.right {
+      float: right;
+    }
+
+    &.console {
+      &:hover {
+        color: @whiter;
+        background-color: @black;
+      }
+    }
+
+    &.submit {
+      color: @green;
+      &:hover {
+        color: @whiter;
+        background-color: @green;
+      }
+    }
+  }
+}
