@@ -124,18 +124,21 @@ function join() {
 function exit() {
   var username = this.socket.username;
   verbose('queue/exit, username: %s', username);
-  var team = user[username].team;
-
-  var isWaitingPlayer = teams.waitPlayer.indexOf(team) > -1;
-  var isWaitingConfirm = teams.waitConfirm.indexOf(team) > -1;
-  if (isWaitingPlayer || isWaitingConfirm) {
-    team.removeUser(username);
-    if (isWaitingConfirm) {
-      updateClient(team, 'wait-player');
-      team.move(teams.waitConfirm, teams.waitPlayer);
+  if (user[username]) {
+    var team = user[username].team;
+    if (team) {
+      var isWaitingPlayer = teams.waitPlayer.indexOf(team) > -1;
+      var isWaitingConfirm = teams.waitConfirm.indexOf(team) > -1;
+      if (isWaitingPlayer || isWaitingConfirm) {
+        team.removeUser(username);
+        if (isWaitingConfirm) {
+          updateClient(team, 'wait-player');
+          team.move(teams.waitConfirm, teams.waitPlayer);
+        }
+      } else {
+        error('queue/exit, abnormal state');
+      }
     }
-  } else {
-    error('queue/exit, abnormal state');
   }
 }
 
