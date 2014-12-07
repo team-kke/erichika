@@ -62,7 +62,7 @@ Team.prototype.removeUser = function (username) {
 
 function updateClient(team, state) {
   if (!team instanceof Team || typeof state !== 'string') {
-    error('updateClient, check arguments');
+    error('queue.js, updateClient, check arguments');
     return;
   }
 
@@ -179,7 +179,6 @@ function confirm() {
       game.start({
         team: team
       });
-      // TODO: start game!
     }
   }
 }
