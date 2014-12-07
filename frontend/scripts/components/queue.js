@@ -90,6 +90,9 @@ var QueueComponent = React.createClass({
   update: function (data) {
     switch (data.state) {
     case 'wait-player':
+      if (this.state.queueState !== Queueing) {
+        this.setState({queueState: Queueing});
+      }
       break;
     case 'wait-confirm':
       if (this.state.queueState !== WaitingConfirm) {
