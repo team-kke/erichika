@@ -50,10 +50,15 @@ Team.prototype.removeUser = function (username) {
 };
 
 function updateClient(team, state) {
+  if (!team instanceof Team || typeof state !== 'string') {
+    error('updateClient, check arguments');
+    return;
+  }
+
   var current;
   if (state === 'wait-player') {
     current = team.members.length;
-  } else if (state === 'wait-confirmed') {
+  } else if (state === 'wait-confirm') {
     current = Object.keys(team.confirmed)
       .map(function (k) {
         return team.confirmed[k];
@@ -134,13 +139,13 @@ function confirm() {
   var username = this.socket.username;
   verbose('queue/confirm, username: %s', username);
   var team = user[username].team;
-  if (teams.waitConfirm.indexOf(team) > -1) {
+  if (teams.waitConfirm.indexOf(team) < 0) {
     error('queue/confirm, abnormal state');
     return;
   }
 
   team.confirmed[username] = true;
-  updateClient('wait-confirm');
+  updateClient(team, 'wait-confirm');
   // from now, client knows this confirm makes game start or not.
 
   var everyoneConfirmed = true;
