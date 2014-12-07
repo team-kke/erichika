@@ -1,6 +1,7 @@
 "use strict";
 
 var debug = require('debug')('socket');
+var error = require('debug')('error');
 var io = require('socket.io')();
 var room = require('./room');
 
@@ -40,7 +41,7 @@ function initialize(socket) {
 
 io.on('connection', function (socket) {
   if (!sessionParser) {
-    console.log('no session parser!');
+    error('no session parser!');
     socket.disconnect();
     return;
   }
