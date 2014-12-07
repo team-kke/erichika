@@ -17,8 +17,8 @@ var InGameComponent = React.createClass({
     return {current: this.teams.ours, areaRight: IdeState};
   },
   componentDidMount: function () {
-    this.props.socket.emit('didJoin');
-    this.props.socket.on('update', this.update);
+    this.props.socket.emit('game/didJoin');
+    this.props.socket.on('game/update', this.update);
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;
