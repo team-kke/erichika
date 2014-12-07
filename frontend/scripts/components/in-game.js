@@ -12,9 +12,18 @@ var // State Enums
   ConsoleState = 1;
 
 var InGameComponent = React.createClass({
-  teams: {ours: new Team(true), opponents: new Team(false)},
+  teams: {ours: new Team('ours'), opponents: new Team('opponents')},
   getInitialState: function () {
     return {current: this.teams.ours, areaRight: IdeState};
+  },
+  componentDidMount: function () {
+    this.props.socket.emit('didJoin');
+    this.props.socket.on('update', this.update);
+  },
+  update: function (data) {
+    this.teams.ours.users = data.ours.users;
+    this.teams.opponents.users = data.opponents.users;
+    this.setState({current: this.teams[this.state.current.name]});
   },
   render: function () {
     var areaRight;
@@ -31,14 +40,15 @@ var InGameComponent = React.createClass({
       break;
     }
 
-
     return (
       <div id='in-game'>
         <div className='content'>
           <InGameNav ideButtonText={ideButtonText}
                      consoleToggler={this.toggleConsole} />
           <div className='area-left'>
-            <InGameChat socket={this.props.socket} />
+            <InGameChat users={this.state.current.users}
+                        chatLogs={this.state.current.chatLogs}
+                        chatHandler={this.sendChat} />
           </div>
           <div className='area-right'>
             {areaRight}
@@ -60,6 +70,9 @@ var InGameComponent = React.createClass({
   onIdeChange: function (code) {
     this.props.socket.emit('game/code', {code: code});
     this.teams.ours.code = code;
+  },
+  sendChat: function (text) {
+    this.props.socket.emit('game/chat', {text: text});
   }
 });
 

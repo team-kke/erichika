@@ -4,21 +4,17 @@ var React = require('react/addons');
 
 var UserList = React.createClass({
   renderUsers: function () {
-    return [
-      {username: 'alldne', me: false},
-      {username: 'noraesae', me: true},
-      {username: 'dogedogedogedoge', me: false},
-    ].map(function (user) {
+    return this.props.users.map(function (user) {
       var classes = React.addons.classSet({
         user: true,
-        me: user.me
+        me: user.me,
+        current: user.current
       });
       return <li className={classes}>{user.username}</li>;
     });
   },
   renderLogs: function () {
-    return [
-    ].map(function (log) {
+    return this.props.chatLogs.map(function (log) {
       return (
         <li className={log.me ? 'me' : ''}>
           <div className='info'>
@@ -41,10 +37,19 @@ var UserList = React.createClass({
             {this.renderLogs()}
           </ul>
           <input ref='chatInput' className='chat-input' type='text'
-                 placeholder='Say hello!' />
+                 placeholder='Say hello!' onKeyUp={this.onKeyUp}/>
         </div>
       </div>
     );
+  },
+  onKeyUp: function (e) {
+    if (e.keyCode === 13) {
+      var text = e.target.value;
+      if (text) {
+        this.props.chatHandler(text);
+        e.target.value = '';
+      }
+    }
   }
 });
 
