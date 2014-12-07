@@ -58,7 +58,7 @@ function startGame(context) {
 }
 
 function didJoin() {
-  verbose('game/didjoin');
+  verbose('game/didJoin');
   updateClient(games[this.socket.gid]);
 }
 
