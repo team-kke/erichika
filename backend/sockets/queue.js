@@ -31,6 +31,9 @@ Team.prototype.move = function (src, dest) {
   verbose('Team.move(%s, %s)', src, dest);
   var index = src.indexOf(this);
   if (index > -1) {
+    // reset confirm count roughly.
+    this.confirmed = {};
+
     src.splice(index, 1);
     verbose('Team.move(%s, %s), remove team from src', src, dest);
     if (dest) {
