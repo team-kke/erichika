@@ -145,50 +145,54 @@ function exit() {
 function confirm() {
   var username = this.socket.username;
   verbose('queue/confirm, username: %s', username);
-  var team = user[username].team;
-  if (teams.waitConfirm.indexOf(team) < 0) {
-    error('queue/confirm, abnormal state');
-    return;
-  }
-
-  team.confirmed[username] = true;
-  updateClient(team, 'wait-confirm');
-  // from now, client knows this confirm makes game start or not.
-
-  var everyoneConfirmed = true;
-  for (var u in team.confirmed) {
-    verbose('user: %s, confirmed: %s', u, team.confirmed[u]);
-    if (!team.confirmed[u]) {
-      verbose('queue/confirm, not everyone confirmed yet');
-      everyoneConfirmed = false;
-      break;
+  if (user[username]) {
+    var team = user[username].team;
+    if (teams.waitConfirm.indexOf(team) < 0) {
+      error('queue/confirm, abnormal state');
+      return;
     }
-  }
 
-  if (everyoneConfirmed) {
-    verbose('queue/confirm, everyone confirmed! start a game');
-    team.move(teams.waitConfirm, null);
-    // TODO: start game!
+    team.confirmed[username] = true;
+    updateClient(team, 'wait-confirm');
+    // from now, client knows this confirm makes game start or not.
+
+    var everyoneConfirmed = true;
+    for (var u in team.confirmed) {
+      verbose('user: %s, confirmed: %s', u, team.confirmed[u]);
+      if (!team.confirmed[u]) {
+        verbose('queue/confirm, not everyone confirmed yet');
+        everyoneConfirmed = false;
+        break;
+      }
+    }
+
+    if (everyoneConfirmed) {
+      verbose('queue/confirm, everyone confirmed! start a game');
+      team.move(teams.waitConfirm, null);
+      // TODO: start game!
+    }
   }
 }
 
 function dodge() {
   var username = this.socket.username;
   verbose('queue/dodge, username: %s', username);
-  var team = user[username].team;
-  if (team) {
-    if (teams.waitConfirm.indexOf(team) < 0) {
-      error('queue/dodge, abnormal state');
-      return;
-    }
+  if (user[username]) {
+    var team = user[username].team;
+    if (team) {
+      if (teams.waitConfirm.indexOf(team) < 0) {
+        error('queue/dodge, abnormal state');
+        return;
+      }
 
-    team.removeUser(username);
-    team.move(teams.waitConfirm, teams.waitPlayer);
-    updateClient(team, 'wait-player');
-    verbose('queue/dodge, player(%s) did dodge.. team now goes waiting player', username);
-    queue.push(username);
-    verbose('queue/dodge, player(%s) goes into a queue and is gonna get a new team', username);
-    assignTeam();
+      team.removeUser(username);
+      team.move(teams.waitConfirm, teams.waitPlayer);
+      updateClient(team, 'wait-player');
+      verbose('queue/dodge, player(%s) did dodge.. team now goes waiting player', username);
+      queue.push(username);
+      verbose('queue/dodge, player(%s) goes into a queue and is gonna get a new team', username);
+      assignTeam();
+    }
   }
 }
 
