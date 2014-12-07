@@ -32,6 +32,14 @@ function initialize(socket) {
 
     socket.on('lobby/join', updateUserList);
     socket.on('lobby/leave', updateUserList);
+    socket.on('lobby/chat', function (data) {
+      lobby.emit('lobby/chat', {
+        username: socket.username,
+        text: data.text
+      }, function (receiver, dataToSend) {
+        dataToSend.me = receiver.username === socket.username;
+      });
+    });
   });
 
   socket.on('disconnect', function () {

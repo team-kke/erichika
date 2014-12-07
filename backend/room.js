@@ -24,8 +24,11 @@ Room.prototype.leave = function (socket) {
   this.emit(this.name + '/leave', {username: socket.username});
 };
 
-Room.prototype.emit = function (eventName, data) {
+Room.prototype.emit = function (eventName, data, handler) {
   this.sockets.forEach(function (socket) {
+    if (handler !== undefined) {
+      handler(socket, data);
+    }
     socket.emit(eventName, data);
   });
 };
