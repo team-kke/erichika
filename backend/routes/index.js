@@ -3,6 +3,7 @@
 var error = require('debug')('error');
 var express = require('express');
 var router = express.Router();
+var Sandbox = require('sandbox');
 
 router.get('/', function (req, res) {
   // FIXME: Parse from somewhere else
@@ -35,6 +36,11 @@ router.post('/logout', function (req, res) {
     }
     res.redirect('/');
   });
+});
+
+router.post('/test', function (req, res) {
+  var sandbox = new Sandbox();
+  sandbox.run(req.body.code, res.json.bind(res));
 });
 
 module.exports = router;

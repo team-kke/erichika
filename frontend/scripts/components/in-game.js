@@ -5,12 +5,13 @@ var React = require('react/addons')
   , Ide = require('./ide')
   , InGameChat = require('./in-game-chat')
   , InGameNav = require('./in-game-nav')
-  , Team = require('../team');
+  , Team = require('../team')
+  , request = require('superagent');
 
 var InGameComponent = React.createClass({
   teams: {ours: new Team('ours'), opponents: new Team('opponents')},
   getInitialState: function () {
-    return {current: this.teams.ours, showTestOutput: false};
+    return {current: this.teams.ours, showTestOutput: false, testOutput: null};
   },
   componentDidMount: function () {
     this.props.socket.emit('game/didJoin');
@@ -34,7 +35,7 @@ var InGameComponent = React.createClass({
           <div className='area-right'>
             <Ide code={this.state.current.code} onChange={this.onIdeChange} />
             <TestOutput show={this.state.showTestOutput}
-                        code={this.teams.ours.code}
+                        output={this.state.testOutput}
                         close={this.closeTest} />
           </div>
         </div>
@@ -42,7 +43,16 @@ var InGameComponent = React.createClass({
     );
   },
   runTest: function () {
-    this.setState({showTestOutput: true});
+    var that = this;
+    request
+      .post('/test')
+      .send({code: this.teams.ours.code})
+      .type('json')
+      .end(function (res) {
+        if (res.status === 200) {
+          that.setState({showTestOutput: true, testOutput: res.body});
+        }
+      });
   },
   closeTest: function () {
     this.setState({showTestOutput: false});

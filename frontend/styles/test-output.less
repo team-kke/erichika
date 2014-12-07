@@ -1,5 +1,6 @@
 .test-output {
-  margin: 1px 0 0 1px;
+  padding: 3px;
+  box-sizing: border-box;
   background-color: @black;
   color: @white;
   position: absolute;
@@ -25,5 +26,34 @@
       background-color: @whiter;
       color: @black;
     }
+  }
+
+  .hint-title {
+    font-size: .8rem;
+  }
+
+  .hint {
+    font-size: .7rem;
+    margin: 2px 5px;
+
+    code {
+      border: 1px solid @gray;
+      border-radius: 3px;
+      padding: 1px;
+    }
+  }
+
+  .line {
+    margin: 5px 0 3px;
+    border-top: 1px solid @gray;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+
+  .result {
+    font-size: 1rem;
+    margin: 2px 5px;
   }
 }
