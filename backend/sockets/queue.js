@@ -50,10 +50,25 @@ Team.prototype.removeUser = function (username) {
 };
 
 function updateClient(team, state) {
-  verbose('emit queue/update, state: %s, current: %s', state, team.members.length);
+  var current;
+  if (state === 'wait-player') {
+    current = team.members.length;
+  } else if (state === 'wait-confirmed') {
+    current = Object.keys(team.confirmed)
+      .map(function (k) {
+        return team.confirmed[k];
+      }).filter(function (v) {
+        return v;
+      }).length;
+  } else {
+    error('queue/update, abnormal state);
+    return;
+  }
+
+  verbose('emit queue/update, state: %s, current: %s', state, current);
   team.room.emit('queue/update', {
     state: state,
-    current: team.members.length
+    current: current
   });
 }
 
