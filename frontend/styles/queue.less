@@ -1,0 +1,68 @@
+.loading {
+  width: 30px;
+  height: 30px;
+  margin-top: 9px;
+  background-color: @red;
+  float: left;
+
+  .border-radius(100%);
+  .animation(scaleout, 1.0s, infinite, ease-in-out);
+}
+
+&:hover .loading {
+  background-color: @whiter;
+}
+
+@-webkit-keyframes scaleout {
+  0% { -webkit-transform: scale(0.0) }
+  100% {
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+@keyframes scaleout {
+  0% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  } 100% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+    opacity: 0;
+  }
+}
+
+.button-text-wrapper {
+  position: relative;
+  margin-left: 35px;
+
+  .button-text {
+    .transition(.1s linear all);
+  }
+
+  .queueing {
+    .opacity(1);
+    .count {
+      margin-left: 3px;
+    }
+  }
+  .cancel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    .opacity(0);
+  }
+}
+
+&:hover .queueing {
+  .opacity(0);
+}
+
+&:hover .cancel {
+  .opacity(1);
+}
+
+&.queue:hover {
+  background-color: @red;
+  color: @whiter;
+}

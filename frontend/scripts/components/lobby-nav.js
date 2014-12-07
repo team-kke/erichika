@@ -1,14 +1,13 @@
 "use strict";
 
-var React = require('react/addons');
+var React = require('react/addons')
+  , Queue = require('./queue');
 
 var LobbyNavComponent = React.createClass({
   render: function () {
     return (
       <div className='nav'>
-        <a className='button left' href='#' onClick={this.gameStart}>
-          Game Start
-        </a>
+        <Queue socket={this.props.socket} />
         <a className='button right' href='/logout' onClick={this.signout}>
           Sign out
           <form ref='signoutForm' style={{display: 'hidden'}}
@@ -16,10 +15,6 @@ var LobbyNavComponent = React.createClass({
         </a>
       </div>
     );
-  },
-  gameStart: function (e) {
-    this.props.socket.emit('queue/join');
-    e.preventDefault();
   },
   signout: function (e) {
     this.refs.signoutForm.getDOMNode().submit();
