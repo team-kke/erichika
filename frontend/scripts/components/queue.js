@@ -105,6 +105,7 @@ var QueueComponent = React.createClass({
     if (this.refs.queueCount) {
       var count = this.refs.queueCount.getDOMNode();
       count.innerText = data.current + ' / ' + MaxPlayerCount;
+      count.textContent = data.current + ' / ' + MaxPlayerCount;
     }
   },
   confirm: function (e) {
