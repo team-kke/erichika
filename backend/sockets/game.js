@@ -12,8 +12,8 @@ function Game(id, users, room) {
   // TODO:validate users.length
 
   this.id = id;
-  this.ours = users.splice(0, 3);
-  this.opponents = users;
+  this.ours = { users: users.splice(0, 3)};
+  this.opponents = { users: users };
   this.room = room;
 }
 
