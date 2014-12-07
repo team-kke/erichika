@@ -32,9 +32,13 @@ Team.prototype.move = function (src, dest) {
   var index = src.indexOf(this);
   if (index > -1) {
     src.splice(index, 1);
+    verbose('Team.move(%s, %s), remove team from src', src, dest);
     if (dest) {
+      verbose('Team.move(%s, %s), push team to dest', src, dest);
       dest.push(this);
     }
+  } else {
+    verbose('Team.move(%s, %s), src does not contain this team.', src, dest);
   }
 };
 
@@ -66,7 +70,7 @@ function updateClient(team, state) {
         return v;
       }).length;
   } else {
-    error('queue/update, abnormal state');
+    error('queue/update, abnormal state(%s)', state);
     return;
   }
 
@@ -150,6 +154,7 @@ function confirm() {
 
   var everyoneConfirmed = true;
   for (var u in team.confirmed) {
+    verbose('user: %s, confirmed: %s', u, team.confirmed[u]);
     if (!team.confirmed[u]) {
       verbose('queue/confirm, not everyone confirmed yet');
       everyoneConfirmed = false;
