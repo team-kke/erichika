@@ -95,7 +95,8 @@ var QueueComponent = React.createClass({
       }
       break;
     case 'wait-confirm':
-      if (this.state.queueState !== WaitingConfirm) {
+      if (this.state.queueState !== WaitingConfirm &&
+          this.state.queueState !== Confirmed) {
         this.setState({queueState: WaitingConfirm});
       }
       break;
