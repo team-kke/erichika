@@ -3,6 +3,10 @@
 var React = require('react/addons');
 
 var UserList = React.createClass({
+  componentDidUpdate: function () {
+    var log = this.refs.chatLog.getDOMNode();
+    log.scrollTop = log.scrollHeight;
+  },
   renderUsers: function () {
     return this.props.users.map(function (user) {
       var classes = React.addons.classSet({

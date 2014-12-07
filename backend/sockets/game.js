@@ -83,7 +83,8 @@ function didJoin() {
 }
 
 module.exports = generate({
-  'game/didJoin': { name: 'didJoin', function: didJoin }
+  'game/didJoin': { name: 'didJoin', function: didJoin },
+  'game/chat': { name: 'chat', function: chat }
 });
 
 module.exports.start = startGame;

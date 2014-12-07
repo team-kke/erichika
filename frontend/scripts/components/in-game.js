@@ -6,6 +6,7 @@ var React = require('react/addons')
   , InGameChat = require('./in-game-chat')
   , InGameNav = require('./in-game-nav')
   , Team = require('../team')
+  , moment = require('moment')
   , request = require('superagent');
 
 var InGameComponent = React.createClass({
@@ -16,11 +17,19 @@ var InGameComponent = React.createClass({
   componentDidMount: function () {
     this.props.socket.emit('game/didJoin');
     this.props.socket.on('game/update', this.update);
+    this.props.socket.on('game/chat', this.updateChat);
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;
     this.teams.opponents.users = data.opponents.users;
-    this.setState({current: this.teams[this.state.current.name]});
+    this.setState({current: this.teams[this.state.current.side]});
+  },
+  updateChat: function (data) {
+    data.chat.datetime = moment().format('h:mm A');
+    this.teams[data.side].chatLogs.concat([data.chat]);
+    if (this.state.current.side === data.side) {
+      this.setState({current: this.teams[this.state.current.side]});
+    }
   },
   render: function () {
     return (
