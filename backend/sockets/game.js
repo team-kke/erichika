@@ -20,17 +20,14 @@ function Game(id, users, room) {
 var games = {};
 var count = 0;
 
-function updateClient(game) {
+function updateClient(game, socket) {
   if (!game instanceof Game) {
     error('game.js, updateClient, check arguments');
   }
 
   verbose('game/update');
 
-  game.room.emit('game/update', {
-    ours: game.ours,
-    opponents: game.opponents
-  }, function (socket, data) {
+  function postProcess(socket, data) {
     // TODO: check 'current' true
     var swap = false;
     data.ours.users.forEach(function (user) {
@@ -46,7 +43,20 @@ function updateClient(game) {
       data.ours = data.opponents;
       data.opponents = t;
     }
-  });
+  }
+
+  var data = {
+    ours: game.ours,
+    opponents: game.opponents
+  };
+
+  if (socket) {
+    postProcess(socket, data);
+    socket.emit('game/update', data);
+  } else {
+    game.room.emit('game/update', data, postProcess);
+  }
+
 }
 
 function startGame(context) {
@@ -69,7 +79,7 @@ function startGame(context) {
 
 function didJoin() {
   verbose('game/didJoin');
-  updateClient(games[this.socket.gid]);
+  updateClient(games[this.socket.gid], this.socket);
 }
 
 module.exports = generate({
