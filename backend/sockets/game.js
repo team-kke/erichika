@@ -4,6 +4,9 @@ var error = require('debug')('error');
 var generate = require('./base');
 var verbose = require('debug')('verbose:game');
 
+var games = {};
+var incrementId = 0;
+
 function Game(id, users, room) {
   verbose('Game() constructor called with users: [%s]', users.map(function (user) {
     return user.username;
@@ -12,13 +15,72 @@ function Game(id, users, room) {
   // TODO:validate users.length
 
   this.id = id;
-  this.ours = { users: users.splice(0, 3)};
-  this.opponents = { users: users };
+
+  this.team = [
+    { users: users.splice(0, 3) },
+    { users: users }
+  ];
   this.room = room;
 }
 
-var games = {};
-var count = 0;
+Game.prototype.all = function () {
+  return this.team[0].users.concat(this.team[1].users);
+};
+
+Game.prototype.inTeam = function (num, socket) {
+  return this.team[num].users.filter(function (user) {
+    return user.username === socket.username;
+  }).length > 0;
+};
+
+Game.prototype.ours = function (socket) {
+  var team;
+  if (this.inTeam(0, socket)) {
+    team = this.team[0];
+  } else if (this.inTeam(1, socket)) {
+    team = this.team[1];
+  } else {
+    return null;
+  }
+
+  team.users.forEach(function (user) {
+    // TODO: check 'current' true
+    user.me = user.username === socket.username;
+  });
+
+  return team;
+};
+
+Game.prototype.opponents = function (socket) {
+  var team;
+  if (this.inTeam(1, socket)) {
+    team = this.team[0];
+  } else if (this.inTeam(0, socket)) {
+    team = this.team[1];
+  } else {
+    return null;
+  }
+
+  team.users.forEach(function (user) {
+    // TODO: check 'current' true
+    user.me = false;
+  });
+
+  return team;
+};
+
+Game.prototype.broadcast = function (from, eventName, data) {
+  var handlerFactory = function (side) {
+    return function (socket) {
+      // Clone data
+      data.side = side;
+      socket.emit(eventName, data);
+    };
+  };
+
+  this.ours(from).users.forEach(handlerFactory('ours'));
+  this.opponents(from).users.forEach(handlerFactory('opponents'));
+};
 
 function updateClient(game, socket) {
   if (!game instanceof Game) {
@@ -27,54 +89,18 @@ function updateClient(game, socket) {
 
   verbose('game/update');
 
-  function postProcess(socket, data) {
-    // TODO: check 'current' true
-    var swap = false;
-    data.ours.users.forEach(function (user) {
-      user.me = user.username === socket.username;
+  var update = function (target) {
+    target.emit('game/update', {
+      ours: game.ours(target),
+      opponents: game.opponents(target)
     });
-    data.opponents.users.forEach(function (user) {
-      user.me = user.username === socket.username;
-      swap = user.me || swap;
-    });
-
-    if (swap) {
-      var t = data.ours;
-      data.ours = data.opponents;
-      data.opponents = t;
-    }
-  }
-
-  var data = {
-    ours: game.ours,
-    opponents: game.opponents
   };
 
   if (socket) {
-    postProcess(socket, data);
-    socket.emit('game/update', data);
+    update(socket);
   } else {
-    game.room.emit('game/update', data, postProcess);
+    game.all().forEach(update);
   }
-
-}
-
-function startGame(context) {
-  var game = new Game(count, context.team.members.map(function (username) {
-    return {
-      username: username,
-      me: false,
-      current: false
-    };
-  }), context.team.room);
-
-  verbose('a new game is made. id = %s', count);
-
-  context.team.room.emit('game/join', null, function (socket) {
-    socket.gid = count;
-  });
-
-  games[count++] = game;
 }
 
 function didJoin() {
@@ -83,8 +109,25 @@ function didJoin() {
 }
 
 module.exports = generate({
-  'game/didJoin': { name: 'didJoin', function: didJoin },
-  'game/chat': { name: 'chat', function: chat }
+  'game/didJoin': { name: 'didJoin', function: didJoin }
 });
+
+function startGame(context) {
+  var game = new Game(incrementId, context.team.members.map(function (username) {
+    return {
+      username: username,
+      me: false,
+      current: false
+    };
+  }), context.team.room);
+
+  verbose('a new game is made. id = %s', incrementId);
+
+  game.room.emit('game/join', null, function (socket) {
+    socket.gid = incrementId;
+  });
+
+  games[incrementId++] = game;
+}
 
 module.exports.start = startGame;
