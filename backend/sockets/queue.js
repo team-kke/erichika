@@ -132,8 +132,8 @@ function exit() {
       if (isWaitingPlayer || isWaitingConfirm) {
         team.removeUser(username);
         if (isWaitingConfirm) {
-          updateClient(team, 'wait-player');
           team.move(teams.waitConfirm, teams.waitPlayer);
+          updateClient(team, 'wait-player');
         }
       } else {
         error('queue/exit, abnormal state');
@@ -174,28 +174,6 @@ function confirm() {
   }
 }
 
-function dodge() {
-  var username = this.socket.username;
-  verbose('queue/dodge, username: %s', username);
-  if (user[username]) {
-    var team = user[username].team;
-    if (team) {
-      if (teams.waitConfirm.indexOf(team) < 0) {
-        error('queue/dodge, abnormal state');
-        return;
-      }
-
-      team.removeUser(username);
-      team.move(teams.waitConfirm, teams.waitPlayer);
-      updateClient(team, 'wait-player');
-      verbose('queue/dodge, player(%s) did dodge.. team now goes waiting player', username);
-      queue.push(username);
-      verbose('queue/dodge, player(%s) goes into a queue and is gonna get a new team', username);
-      assignTeam();
-    }
-  }
-}
-
 function disconnect() {
   var username = this.socket.username;
   verbose('disconnect. %s', username);
@@ -226,6 +204,6 @@ module.exports = generate({
   'queue/join': { name: 'join', function: join },
   'queue/exit': { name: 'exit', function: exit },
   'queue/confirm': { name: 'confirm', function: confirm },
-  'queue/dodge': { name: 'dodge', function: dodge },
+  'queue/dodge': { name: 'dodge', function: exit },
   'disconnect': { name: 'disconnect', function: disconnect }
 });
