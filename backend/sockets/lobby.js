@@ -1,6 +1,6 @@
 "use strict";
 
-var lobby = require('./room').get('lobby');
+var lobby = require('../room').get('lobby');
 
 function connect() {
   lobby.join(this.socket);
