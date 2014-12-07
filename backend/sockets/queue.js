@@ -136,8 +136,8 @@ function exit() {
         team.removeUser(username);
         if (isWaitingConfirm) {
           team.move(teams.waitConfirm, teams.waitPlayer);
-          updateClient(team, 'wait-player');
         }
+        updateClient(team, 'wait-player');
       } else {
         error('queue/exit, abnormal state');
       }
