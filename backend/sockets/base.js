@@ -3,6 +3,7 @@
 var debug = require('debug')('gen');
 
 module.exports = function (obj) {
+  debug('generate.. [%s]', Object.keys(obj));
   var e, key;
   var Route = function (socket) {
     this.socket = socket;
