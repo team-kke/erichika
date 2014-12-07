@@ -1,0 +1,29 @@
+.test-output {
+  margin: 1px 0 0 1px;
+  background-color: @black;
+  color: @white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+
+  .close-button {
+    display: block;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: @whiter;
+    text-decoration: none;
+    width: 17px;
+    height: 17px;
+    line-height: 14px;
+    font-size: 30px;
+    text-align: center;
+
+    &:hover {
+      background-color: @whiter;
+      color: @black;
+    }
+  }
+}

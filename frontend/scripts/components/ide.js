@@ -18,8 +18,13 @@ var IdeComponent = React.createClass({
     session.setUseSoftTabs(true);
     session.on('change', this.onChange);
   },
+  componentDidUpdate: function () {
+    if (this.editor) {
+      this.editor.setValue(this.props.code);
+    }
+  },
   render: function () {
-    return <div ref='ide' className='ide'>{this.props.code}</div>;
+    return <div ref='ide' className='ide'></div>;
   },
   onChange: function () {
     this.props.onChange(this.editor.getValue());
