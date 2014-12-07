@@ -39,7 +39,6 @@ function updateClient(game) {
 }
 
 function startGame(context) {
-
   var game = new Game(count, context.team.members.map(function (username) {
     return {
       name: username,
@@ -65,4 +64,5 @@ function didJoin() {
 module.exports = generate({
   'game/didJoin': { name: 'didJoin', function: didJoin }
 });
+
 module.exports.start = startGame;
