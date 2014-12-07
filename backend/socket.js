@@ -4,6 +4,7 @@ var debug = require('debug')('socket');
 var error = require('debug')('error');
 var io = require('socket.io')();
 var route = {
+  game: require('./sockets/game'),
   lobby: require('./sockets/lobby'),
   queue: require('./sockets/queue')
 };
@@ -37,6 +38,7 @@ io.on('connection', function (socket) {
 
     socket.username = session.username;
 
+    route.game(socket);
     route.lobby(socket);
     route.queue(socket);
   });
