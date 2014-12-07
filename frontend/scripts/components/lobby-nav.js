@@ -3,18 +3,6 @@
 var React = require('react/addons');
 
 var LobbyNavComponent = React.createClass({
-  getInitialState: function () {
-    return {userList: []};
-  },
-  componentDidMount: function () {
-    var that = this;
-    this.props.socket.emit('lobby/connect');
-    this.props.socket.propagate('lobby/join');
-    this.props.socket.propagate('lobby/leave');
-    this.props.socket.on('lobby/userList', function (data) {
-      that.setState({userList: data.userList});
-    });
-  },
   render: function () {
     return (
       <div className='nav'>
