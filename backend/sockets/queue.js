@@ -15,6 +15,7 @@ function Team() {
   verbose('Team() constructor called');
   this.room = new room.Room();
   this.members = [];
+  this.confirmed = {};
 }
 
 Team.prototype.push = function (username) {
@@ -23,6 +24,7 @@ Team.prototype.push = function (username) {
   this.room.push(socket);
   this.members.push(username);
   user[username].team = this;
+  this.confirmed[username] = false;
 };
 
 Team.prototype.move = function (src, dest) {
@@ -43,6 +45,7 @@ Team.prototype.removeUser = function (username) {
     this.members.splice(index, 1);
     this.room.remove(user[username].socket);
     user[username].team = null;
+    delete this.confirmed[username];
   }
 };
 
@@ -113,6 +116,32 @@ function exit() {
 }
 
 function confirm() {
+  var username = this.socket.username;
+  verbose('queue/confirm, username: %s', username);
+  var team = user[username].team;
+  if (teams.waitConfirm.indexOf(team) > -1) {
+    error('queue/confirm, abnormal state');
+    return;
+  }
+
+  team.confirmed[username] = true;
+  updateClient('wait-confirm');
+  // from now, client knows this confirm makes game start or not.
+
+  var everyoneConfirmed = true;
+  for (var u in team.confirmed) {
+    if (!team.confirmed[u]) {
+      verbose('queue/confirm, not everyone confirmed yet');
+      everyoneConfirmed = false;
+      break;
+    }
+  }
+
+  if (everyoneConfirmed) {
+    verbose('queue/confirm, everyone confirmed! start a game');
+    team.move(teams.waitConfirm, null);
+    // TODO: start game!
+  }
 }
 
 function dodge() {
