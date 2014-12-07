@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react/addons')
+  , ChatRoom = require('./chat-room')
   , LobbyNav = require('./lobby-nav')
   , UserList = require('./user-list');
 
@@ -26,7 +27,7 @@ var LobbyComponent = React.createClass({
             <UserList data={this.state.userList} />
           </div>
           <div className='area-right'>
-            <h1>hello</h1>
+            <ChatRoom socket={this.props.socket} />
           </div>
         </div>
       </div>

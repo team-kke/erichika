@@ -46,6 +46,7 @@
     "express": "^4.10.4",
     "express-session": "^1.9.3",
     "jade": "^1.8.1",
+    "moment": "^2.8.4",
     "redis": "^0.12.1",
     "socket.io": "^1.2.1"
   }

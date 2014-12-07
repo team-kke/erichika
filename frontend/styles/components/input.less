@@ -1,3 +1,7 @@
+input {
+  outline: none;
+}
+
 input.text {
   margin: 0;
   padding: 5px 10px;
@@ -7,10 +11,6 @@ input.text {
   color: @color;
   .border-radius(5px);
   .transition(.1s linear all);
-
-  &:focus {
-    outline: none;
-  }
 }
 
 input.text-lg {

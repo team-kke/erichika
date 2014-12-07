@@ -1,0 +1,53 @@
+.chat-room {
+  margin-left: 1px;
+
+  ul.log {
+    margin: 0;
+    padding: 0;
+    height: 519px;
+    background-color: @whiter;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    li {
+      box-sizing: border-box;
+      display: block;
+      padding: 3px 5px;
+
+      .info {
+        span.username {
+          font-weight: bold;
+          font-size: 1.1rem;
+        }
+
+        span.datetime {
+          margin: 0 5px;
+          font-size: 0.8rem;
+          color: @gray;
+        }
+      }
+
+      .text {
+        margin-left: 5px;
+        word-wrap: break-word;
+      }
+
+      &.me .username {
+        color: @green;
+      }
+    }
+  }
+
+  input.chat-input {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    border: none;
+    height: 30px;
+    line-height: 24px;
+    padding: 3px 5px;
+    margin-top: 1px;
+    background-color: @whiter;
+    color: @black;
+  }
+}
