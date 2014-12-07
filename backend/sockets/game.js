@@ -3,7 +3,7 @@
 var error = require('debug')('error');
 var verbose = require('debug')('verbose:game');
 
-function Game(id, users) {
+function Game(id, users, room) {
   verbose('Game() constructor called with users: [%s]', users.map(function (user) {
     return user.name;
   }));
@@ -13,6 +13,7 @@ function Game(id, users) {
   this.id = id;
   this.ours = users.splice(0, 3);
   this.opponents = users;
+  this.room = room;
 }
 
 var games = {};
@@ -45,7 +46,7 @@ function startGame(context) {
       me: false,
       current: false
     };
-  }));
+  }), context.team.room);
 
   verbose('a new game is made. id = %s', count);
 
