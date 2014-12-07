@@ -1,5 +1,6 @@
 "use strict";
 
+var error = require('debug')('error');
 var express = require('express');
 var router = express.Router();
 
@@ -23,6 +24,17 @@ router.post('/login', function (req, res) {
   } else {
     res.json({ login: true });
   }
+});
+
+router.post('/logout', function (req, res) {
+// FIXME: CSRF
+  req.session.destroy(function (err) {
+    if (err) {
+      error(err);
+      return;
+    }
+    res.redirect('/');
+  });
 });
 
 module.exports = router;
