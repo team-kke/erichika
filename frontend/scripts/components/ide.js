@@ -6,21 +6,30 @@ require('brace/mode/javascript');
 
 var React = require('react/addons');
 
-var InGameComponent = React.createClass({
+var IdeComponent = React.createClass({
+  editor: null,
   componentDidMount: function () {
-    var editor = ace.edit(this.refs.ide.getDOMNode());
-    editor.setTheme('ace/theme/tomorrow');
-    var session = editor.getSession();
+    this.editor = ace.edit(this.refs.ide.getDOMNode());
+    this.editor.setTheme('ace/theme/tomorrow');
+
+    var session = this.editor.getSession();
     session.setMode('ace/mode/javascript');
     session.setTabSize(2);
     session.setUseSoftTabs(true);
+    session.on('change', this.onChange);
+  },
+  componentDidUpdate: function () {
+    this.editor.setValue(this.props.code);
   },
   render: function () {
     return (
       <div ref='ide' className='ide'>
       </div>
     );
+  },
+  onChange: function () {
+    this.props.onChange(this.editor.getValue());
   }
 });
 
-module.exports = InGameComponent;
+module.exports = IdeComponent;

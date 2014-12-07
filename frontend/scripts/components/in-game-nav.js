@@ -10,7 +10,8 @@ var InGameNavComponent = React.createClass({
         <a className='button left' href='#'>Opponents&rsquo;</a>
         <a className='button left' href='#'>Question</a>
         <a className='button right submit' href='#'>Submit</a>
-        <a className='button right console' href='#'>Console</a>
+        <a className='button right console' href='#'
+           onClick={this.props.consoleToggler}>{this.props.ideButtonText}</a>
       </div>
     );
   }
