@@ -3,6 +3,7 @@
     "node": true,
   },
   "rules" : {
+    "no-unused-vars": false,
     "quotes": false,
     "new-cap": false,
     "space-after-keywords": [2, "always", {"checkFunctionKeyword": true}],
