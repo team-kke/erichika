@@ -1,6 +1,7 @@
 "use strict";
 
 var error = require('debug')('error');
+var generate = require('./base');
 var verbose = require('debug')('verbose:game');
 
 function Game(id, users, room) {
@@ -38,7 +39,6 @@ function updateClient(game) {
 }
 
 function startGame(context) {
-  context.team.room.emit('game/join');
 
   var game = new Game(count, context.team.members.map(function (username) {
     return {
@@ -50,8 +50,19 @@ function startGame(context) {
 
   verbose('a new game is made. id = %s', count);
 
+  context.team.room.emit('game/join', null, function (socket) {
+    socket.gid = count;
+  });
+
   games[count++] = game;
-  updateClient(game);
 }
 
+function didJoin() {
+  verbose('game/didjoin');
+  updateClient(games[this.socket.gid]);
+}
+
+module.exports = generate({
+  'game/didJoin': { name: 'didJoin', function: didJoin }
+});
 module.exports.start = startGame;
