@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react/addons')
+  , LobbyNav = require('./lobby-nav')
   , UserList = require('./user-list');
 
 var LobbyComponent = React.createClass({
@@ -20,9 +21,7 @@ var LobbyComponent = React.createClass({
     return (
       <div id='lobby'>
         <div className='content'>
-          <div className='nav'>
-            Temp Nav
-          </div>
+          <LobbyNav socket={this.props.socket} />
           <div className='area-left'>
             <UserList data={this.state.userList} />
           </div>
