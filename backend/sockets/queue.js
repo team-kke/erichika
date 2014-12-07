@@ -173,6 +173,23 @@ function confirm() {
 }
 
 function dodge() {
+  var username = this.socket.username;
+  verbose('queue/dodge, username: %s', username);
+  var team = user[username].team;
+  if (team) {
+    if (teams.waitConfirm.indexOf(team) < 0) {
+      error('queue/dodge, abnormal state');
+      return;
+    }
+
+    team.removeUser(username);
+    team.move(teams.waitConfirm, teams.waitPlayer);
+    updateClient(team, 'wait-player');
+    verbose('queue/dodge, player(%s) did dodge.. team now goes waiting player', username);
+    queue.push(username);
+    verbose('queue/dodge, player(%s) goes into a queue and is gonna get a new team', username);
+    assignTeam();
+  }
 }
 
 function disconnect() {
