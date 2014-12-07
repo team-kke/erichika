@@ -23,21 +23,21 @@ function Game(id, users, room) {
   this.room = room;
 }
 
-Game.prototype.all = function () {
-  return this.team[0].users.concat(this.team[1].users);
+Game.prototype.sockets = function () {
+  return this.room.sockets;
 };
 
-Game.prototype.inTeam = function (num, socket) {
+Game.prototype.inTeam = function (num, who) {
   return this.team[num].users.filter(function (user) {
-    return user.username === socket.username;
+    return user.username === who.username;
   }).length > 0;
 };
 
-Game.prototype.ours = function (socket) {
+Game.prototype.ours = function (whose) {
   var team;
-  if (this.inTeam(0, socket)) {
+  if (this.inTeam(0, whose)) {
     team = this.team[0];
-  } else if (this.inTeam(1, socket)) {
+  } else if (this.inTeam(1, whose)) {
     team = this.team[1];
   } else {
     return null;
@@ -45,17 +45,17 @@ Game.prototype.ours = function (socket) {
 
   team.users.forEach(function (user) {
     // TODO: check 'current' true
-    user.me = user.username === socket.username;
+    user.me = user.username === whose.username;
   });
 
   return team;
 };
 
-Game.prototype.opponents = function (socket) {
+Game.prototype.opponents = function (whose) {
   var team;
-  if (this.inTeam(1, socket)) {
+  if (this.inTeam(1, whose)) {
     team = this.team[0];
-  } else if (this.inTeam(0, socket)) {
+  } else if (this.inTeam(0, whose)) {
     team = this.team[1];
   } else {
     return null;
@@ -69,12 +69,23 @@ Game.prototype.opponents = function (socket) {
   return team;
 };
 
-Game.prototype.broadcast = function (from, eventName, data) {
+Game.prototype.socket = function (whose) {
+  return this.sockets().filter(function (socket) {
+    return socket.username === whose.username;
+  })[0];
+};
+
+Game.prototype.broadcast = function (from, eventName, data, postProcess) {
+  var that = this;
   var handlerFactory = function (side) {
-    return function (socket) {
-      // Clone data
+    return function (user) {
       data.side = side;
-      socket.emit(eventName, data);
+
+      if (postProcess) {
+        postProcess(user, data);
+      }
+
+      that.socket(user).emit(eventName, data);
     };
   };
 
@@ -99,7 +110,7 @@ function updateClient(game, socket) {
   if (socket) {
     update(socket);
   } else {
-    game.all().forEach(update);
+    game.sockets().forEach(update);
   }
 }
 
@@ -108,8 +119,24 @@ function didJoin() {
   updateClient(games[this.socket.gid], this.socket);
 }
 
+function chat(data) {
+  verbose('game/chat');
+  var game = games[this.socket.gid];
+  game.broadcast(this.socket, 'game/chat', {
+    chat: {
+      username: this.socket.username,
+      text: data.text
+    }
+  }, function (receiver, data) {
+    if (receiver.username === data.chat.username) {
+      data.chat.me = true;
+    }
+  });
+}
+
 module.exports = generate({
-  'game/didJoin': { name: 'didJoin', function: didJoin }
+  'game/didJoin': { name: 'didJoin', function: didJoin },
+  'game/chat': { name: 'chat', function: chat }
 });
 
 function startGame(context) {
