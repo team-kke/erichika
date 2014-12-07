@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: wait confirm with a timeout
+
 var error = require('debug')('error');
 var game = require('./game');
 var generate = require('./base');
