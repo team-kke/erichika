@@ -128,9 +128,7 @@ function chat(data) {
       text: data.text
     }
   }, function (receiver, data) {
-    if (receiver.username === data.chat.username) {
-      data.chat.me = true;
-    }
+    data.chat.me = receiver.username === data.chat.username;
   });
 }
 

@@ -26,7 +26,8 @@ var InGameComponent = React.createClass({
   },
   updateChat: function (data) {
     data.chat.datetime = moment().format('h:mm A');
-    this.teams[data.side].chatLogs.concat([data.chat]);
+    this.teams[data.side].chatLogs =
+      this.teams[data.side].chatLogs.concat([data.chat]);
     if (this.state.current.side === data.side) {
       this.setState({current: this.teams[this.state.current.side]});
     }
