@@ -2,6 +2,7 @@
 
 var debug = require('debug')('socket');
 var io = require('socket.io')();
+var room = require('./room');
 
 exports.attach = function (server) {
   io.attach(server);
@@ -11,6 +12,31 @@ var sessionParser = null;
 exports.setSessionParser = function (parser) {
   sessionParser = parser;
 };
+
+function initialize(socket) {
+  socket.on('lobby/connect', function () {
+    var lobby = room.get('lobby');
+
+    lobby.join(socket);
+
+    var updateUserList = function () {
+      var userList = lobby.sockets.map(function (userSocket) {
+        return {
+          username: userSocket.username,
+          me: userSocket.username === socket.username
+        };
+      });
+      socket.emit('lobby/userList', {userList: userList});
+    };
+
+    socket.on('lobby/join', updateUserList);
+    socket.on('lobby/leave', updateUserList);
+  });
+
+  socket.on('disconnect', function () {
+    debug('-1 socket connection');
+  });
+}
 
 io.on('connection', function (socket) {
   if (!sessionParser) {
@@ -26,12 +52,7 @@ io.on('connection', function (socket) {
       return;
     }
 
-    io.emit('test', { message: 'Hey, everyone! +1 connection' });
-    socket.on('test', function (data) {
-      debug('received: %s', data);
-    });
-    socket.on('disconnect', function () {
-      debug('-1 socket connection');
-    });
+    socket.username = session.username;
+    initialize(socket);
   });
 });
