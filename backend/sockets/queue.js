@@ -1,6 +1,7 @@
 "use strict";
 
 var error = require('debug')('error');
+var game = require('./game');
 var generate = require('./base');
 var room = require('../room');
 var verbose = require('debug')('verbose:queue');
@@ -175,6 +176,9 @@ function confirm() {
     if (everyoneConfirmed) {
       verbose('queue/confirm, everyone confirmed! start a game');
       team.move(teams.waitConfirm, null);
+      game.start({
+        team: team
+      });
       // TODO: start game!
     }
   }
