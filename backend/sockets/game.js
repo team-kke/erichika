@@ -32,7 +32,7 @@ function updateClient(game) {
     opponents: game.opponents
   }, function (socket, data) {
     // TODO: check 'current' true
-    data.ours.forEach(function (user) {
+    data.ours.users.forEach(function (user) {
       user.me = user.name === socket.username;
     });
   });
