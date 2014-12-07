@@ -4,7 +4,9 @@ html
     meta(charset='UTF-8')
     title Erichika
     link(rel='stylesheet', href=frontendRoot + '/css/build.css')
+    link(rel='icon', type='image/jpeg', href=frontendRoot + '/img/erichika.jpg')
 
   body
     div#app
+    input#frontend-root(type='hidden', value=frontendRoot)
     script(src=frontendRoot + '/js/build.js')

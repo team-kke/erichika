@@ -58,6 +58,12 @@ gulp.task('front:css', ['front:clean:css'], function () {
     .pipe(connect.reload());
 });
 
+gulp.task('front:image', ['front:clean:image'], function () {
+  return gulp.src('frontend/images/*')
+    .pipe(gulp.dest('out/img'))
+    .pipe(connect.reload());
+});
+
 gulp.task('front:clean', function () {
   return gulp.src('out')
     .pipe(rimraf());
@@ -73,6 +79,11 @@ gulp.task('front:clean:css', function () {
     .pipe(rimraf());
 });
 
+gulp.task('front:clean:image', function () {
+  return gulp.src('out/img/*')
+    .pipe(rimraf());
+});
+
 gulp.task('front:connect', ['front:build'], function () {
   connect.server({
     root: 'out',
@@ -83,6 +94,7 @@ gulp.task('front:connect', ['front:build'], function () {
 gulp.task('front:watch', function () {
   gulp.watch(['frontend/scripts/**/*'], ['front:js']);
   gulp.watch(['frontend/styles/**/*'], ['front:css']);
+  gulp.watch(['frontend/images/**/*'], ['front:image']);
 });
 
 gulp.task('front:lint', function () {
@@ -94,7 +106,7 @@ gulp.task('front:lint', function () {
 });
 
 gulp.task('front:serve', ['front:connect', 'front:watch']);
-gulp.task('front:build', ['front:clean', 'front:js', 'front:css']);
+gulp.task('front:build', ['front:clean', 'front:js', 'front:css', 'front:image']);
 
 // Common Tasks
 
