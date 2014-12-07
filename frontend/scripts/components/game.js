@@ -21,6 +21,12 @@ var GameComponent = React.createClass({
     this.socket.on('connect', function () {
       that.setState({gameState: GameStateLobby});
     });
+    this.socket.on('game/join', function () {
+      that.setState({gameState: GameStateInGame});
+    });
+    this.socket.on('game/exit', function () {
+      that.setState({gameState: GameStateLobby});
+    });
   },
   render: function () {
     switch (this.state.gameState) {
