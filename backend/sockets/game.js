@@ -17,7 +17,10 @@ function Game(id, users, room) {
     return user.username;
   }));
 
-  // TODO:validate users.length
+  if (users.length !== TeamSize * NumberOfTeam) {
+    error('invaild users.length');
+    return;
+  }
 
   this.id = id;
 
