@@ -12,7 +12,7 @@ For example, 32 + 42 = 9 + 16 = 25 = 52.\
 Implement a function, specialPythagoreanTriplet(), which returns all possible pythagorian triplets making 'a + b + c = n' true.\
 \
 Examples are like below.",
-    preparationDuration: 5
+    preparationDuration: 15
   }
 ];
 
