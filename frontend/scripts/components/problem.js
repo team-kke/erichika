@@ -13,7 +13,8 @@ var ProblemComponent = React.createClass({
     return (
       <div className='problem'>
         <div className='title'>{problem.title}</div>
-        <div className='description'>{problem.description}</div>
+        <div className='description'
+             dangerouslySetInnerHTML={{__html: problem.description}} />
       </div>
     );
   }

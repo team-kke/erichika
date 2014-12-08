@@ -5,9 +5,10 @@ var Sandbox = require('sandbox');
 var problems = [
   {
     title: 'Factorial',
-    description: "Implement a function, factorial(n), to get !n. An example is like below.<br>\
-<pre><code>function factorial(n) {\
-  return n * n; // wrong!\
+    description: "Implement a function, factorial(n), to get !n.<br>\
+An example is like below.<br>\
+<pre><code>function factorial(n) {<br>\
+  return n * n; // wrong!<br>\
 }</code></pre>",
     preparationDuration: 15,
     validations: [
