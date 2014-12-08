@@ -196,6 +196,11 @@ function sendNotice(game, text) {
 function didJoin() {
   verbose('game/didJoin');
   var game = games[this.socket.gid];
+  if (!game) {
+    error('game/didJoin, no game found');
+    return;
+  }
+
   game.userJoined(this.socket);
   updateClient(game, this.socket);
   if (game.isEveryoneJoined()) {
@@ -210,6 +215,11 @@ function didJoin() {
 function chat(data) {
   verbose('game/chat');
   var game = games[this.socket.gid];
+  if (!game) {
+    error('game/chat, no game found');
+    return;
+  }
+
   if (game.isCurrent(this.socket)) {
     verbose('ignore game/chat from current user');
     return;
@@ -229,6 +239,11 @@ function chat(data) {
 function code(data) {
   verbose('game/code');
   var game = games[this.socket.gid];
+  if (!game) {
+    error('game/code, no game found');
+    return;
+  }
+
   if (!game.isCurrent(this.socket)) {
     verbose('ignore game/code from non-current user');
     return;
@@ -239,6 +254,11 @@ function code(data) {
 function submit(data) {
   verbose('game/submit');
   var game = games[this.socket.gid];
+  if (!game) {
+    error('game/submit, no game found');
+    return;
+  }
+
   if (!game.isCurrent(this.socket)) {
     verbose('ignore game/submit from non-current user');
     return;
