@@ -15,7 +15,9 @@ var LobbyComponent = React.createClass({
     this.props.socket.propagate('lobby/join');
     this.props.socket.propagate('lobby/leave');
     this.props.socket.on('lobby/userList', function (data) {
-      that.setState({userList: data.userList});
+      if (that.isMounted()) {
+        that.setState({userList: data.userList});
+      }
     });
   },
   render: function () {

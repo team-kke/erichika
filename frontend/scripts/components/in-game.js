@@ -22,15 +22,23 @@ var InGameComponent = React.createClass({
       problem: null
     };
   },
+  safe: function (callback) {
+    var that = this;
+    return function (data) {
+      if (that.isMounted()) {
+        callback.call(that, data);
+      }
+    };
+  },
   componentDidMount: function () {
     this.props.socket.emit('game/didJoin');
-    this.props.socket.on('game/update', this.update);
-    this.props.socket.on('game/chat', this.updateChat);
-    this.props.socket.on('game/code', this.updateCode);
-    this.props.socket.on('game/problem', this.updateProblem);
-    this.props.socket.on('game/start', this.start);
-    this.props.socket.on('game/win', this.win);
-    this.props.socket.on('game/lose', this.lose);
+    this.props.socket.on('game/update', this.safe(this.update));
+    this.props.socket.on('game/chat', this.safe(this.updateChat));
+    this.props.socket.on('game/code', this.safe(this.updateCode));
+    this.props.socket.on('game/problem', this.safe(this.updateProblem));
+    this.props.socket.on('game/start', this.safe(this.start));
+    this.props.socket.on('game/win', this.safe(this.win));
+    this.props.socket.on('game/lose', this.safe(this.lose));
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;

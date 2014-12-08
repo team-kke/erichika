@@ -10,8 +10,10 @@ var ChatRoomComponent = React.createClass({
   componentDidMount: function () {
     var that = this;
     this.props.socket.on('lobby/chat', function (data) {
-      data.datetime = moment().format('h:mm A');
-      that.setState({chatLogs: that.state.chatLogs.concat([data])});
+      if (that.isMounted()) {
+        data.datetime = moment().format('h:mm A');
+        that.setState({chatLogs: that.state.chatLogs.concat([data])});
+      }
     });
     this.refs.chatInput.getDOMNode().focus();
   },

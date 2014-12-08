@@ -88,24 +88,26 @@ var QueueComponent = React.createClass({
     e.preventDefault();
   },
   update: function (data) {
-    switch (data.state) {
-    case 'wait-player':
-      if (this.state.queueState !== Queueing) {
-        this.setState({queueState: Queueing});
+    if (this.isMounted()) {
+      switch (data.state) {
+      case 'wait-player':
+        if (this.state.queueState !== Queueing) {
+          this.setState({queueState: Queueing});
+        }
+        break;
+      case 'wait-confirm':
+        if (this.state.queueState !== WaitingConfirm &&
+            this.state.queueState !== Confirmed) {
+          this.setState({queueState: WaitingConfirm});
+        }
+        break;
       }
-      break;
-    case 'wait-confirm':
-      if (this.state.queueState !== WaitingConfirm &&
-          this.state.queueState !== Confirmed) {
-        this.setState({queueState: WaitingConfirm});
-      }
-      break;
-    }
 
-    if (this.refs.queueCount) {
-      var count = this.refs.queueCount.getDOMNode();
-      count.innerText = data.current + ' / ' + MaxPlayerCount;
-      count.textContent = data.current + ' / ' + MaxPlayerCount;
+      if (this.refs.queueCount) {
+        var count = this.refs.queueCount.getDOMNode();
+        count.innerText = data.current + ' / ' + MaxPlayerCount;
+        count.textContent = data.current + ' / ' + MaxPlayerCount;
+      }
     }
   },
   confirm: function (e) {
