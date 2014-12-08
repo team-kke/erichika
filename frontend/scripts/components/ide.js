@@ -21,6 +21,7 @@ var IdeComponent = React.createClass({
   componentDidUpdate: function () {
     if (this.editor) {
       this.editor.setValue(this.props.code);
+      this.editor.clearSelection();
     }
   },
   render: function () {
