@@ -163,11 +163,10 @@ function sendNotice(game, text) {
   });
 }
 
-function startGame(game, time) {
+function startGame(game) {
   return function () {
     verbose('emit game/start!');
     game.room.emit('game/start');
-    sendNotice(game, 'Game will begin in ' + time + 's.');
   };
 }
 
@@ -189,9 +188,9 @@ function didJoin() {
     verbose('everyone joined! emit game/problem');
     var problem = getProblem();
     game.room.emit('game/problem', problem);
-
+    sendNotice(game, 'Game begins in ' + problem.preparationDuration + 's.');
     // wait 1 more second and start a game.
-    setTimeout(startGame(game, problem.preparationDuration), 1000 * (problem.preparationDuration + 1));
+    setTimeout(startGame(game), 1000 * (problem.preparationDuration + 1));
   }
 }
 
