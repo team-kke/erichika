@@ -7,6 +7,11 @@ var verbose = require('debug')('verbose:game');
 var games = {};
 var incrementId = 0;
 
+// constants
+var TurnLength = 15; // in seconds
+var TeamSize = 3;
+var NumberOfTeam = 2;
+
 function Game(id, users, room) {
   verbose('Game() constructor called with users: [%s]', users.map(function (user) {
     return user.username;
