@@ -119,7 +119,7 @@ var InGameComponent = React.createClass({
     this.setState({showProblem: true});
   },
   submit: function () {
-    this.props.socket.emit('game/submit', {code: code});
+    this.props.socket.emit('game/submit', {code: this.teams.ours.code});
   },
   closeTest: function () {
     this.setState({showTestOutput: false});
