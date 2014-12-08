@@ -40,6 +40,7 @@ Game.prototype.ours = function (whose) {
   } else if (this.inTeam(1, whose)) {
     team = this.team[1];
   } else {
+    error('Game.ours(), no team available for user %s', whose.username);
     return null;
   }
 
@@ -58,6 +59,7 @@ Game.prototype.opponents = function (whose) {
   } else if (this.inTeam(0, whose)) {
     team = this.team[1];
   } else {
+    error('Game.opponents(), no team available for user %s', whose.username);
     return null;
   }
 
