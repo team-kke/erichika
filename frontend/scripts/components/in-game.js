@@ -18,6 +18,7 @@ var InGameComponent = React.createClass({
     this.props.socket.emit('game/didJoin');
     this.props.socket.on('game/update', this.update);
     this.props.socket.on('game/chat', this.updateChat);
+    this.props.socket.on('game/code', this.updateCode);
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;
@@ -28,6 +29,12 @@ var InGameComponent = React.createClass({
     data.chat.datetime = moment().format('h:mm A');
     this.teams[data.side].chatLogs =
       this.teams[data.side].chatLogs.concat([data.chat]);
+    if (this.state.current.side === data.side) {
+      this.setState({current: this.teams[this.state.current.side]});
+    }
+  },
+  updateCode: function (data) {
+    this.teams[data.side].code = data.code;
     if (this.state.current.side === data.side) {
       this.setState({current: this.teams[this.state.current.side]});
     }

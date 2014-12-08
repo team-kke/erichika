@@ -26,8 +26,10 @@ var IdeComponent = React.createClass({
   render: function () {
     return <div ref='ide' className='ide'></div>;
   },
-  onChange: function () {
-    this.props.onChange(this.editor.getValue());
+  onChange: function (e) {
+    if (!e.bySetValue) {
+      this.props.onChange(this.editor.getValue());
+    }
   }
 });
 

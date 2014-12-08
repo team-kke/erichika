@@ -75,7 +75,8 @@ Game.prototype.socket = function (whose) {
   })[0];
 };
 
-Game.prototype.broadcast = function (from, eventName, data, postProcess) {
+Game.prototype.broadcast = function (from, eventName, data, postProcess,
+                                     exceptForMe) {
   var that = this;
   var handlerFactory = function (side) {
     return function (user) {
@@ -85,7 +86,9 @@ Game.prototype.broadcast = function (from, eventName, data, postProcess) {
         postProcess(user, data);
       }
 
-      that.socket(user).emit(eventName, data);
+      if (!exceptForMe || user.username !== from.username) {
+        that.socket(user).emit(eventName, data);
+      }
     };
   };
 
@@ -132,9 +135,16 @@ function chat(data) {
   });
 }
 
+function code(data) {
+  verbose('game/code');
+  var game = games[this.socket.gid];
+  game.broadcast(this.socket, 'game/code', {code: data.code}, null, true);
+}
+
 module.exports = generate({
   'game/didJoin': { name: 'didJoin', function: didJoin },
-  'game/chat': { name: 'chat', function: chat }
+  'game/chat': { name: 'chat', function: chat },
+  'game/code': { name: 'code', function: code }
 });
 
 function startGame(context) {
