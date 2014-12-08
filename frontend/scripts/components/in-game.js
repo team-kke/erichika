@@ -71,7 +71,14 @@ var InGameComponent = React.createClass({
     }
   },
   updateProblem: function (data) {
+    this.initialize();
     this.setState({problem: data});
+  },
+  initialize: function () {
+    this.teams.ours.code = '';
+    this.teams.ours.chatLogs = [];
+    this.teams.opponents.code = '';
+    this.teams.opponents.chatLogs = [];
   },
   start: function () {
     this.switchTo('ours');
