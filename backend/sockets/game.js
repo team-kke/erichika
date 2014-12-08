@@ -161,10 +161,18 @@ function didJoin() {
   updateClient(game, this.socket);
   if (game.isEveryoneJoined()) {
     verbose('everyone joined! emit game/problem');
+    var preparation = 5;
     game.room.emit('game/problem', {
       title: 'Largest prime factor',
-      description: 'What is the largest prime factor of the number 600851475143?'
+      description: 'What is the largest prime factor of the number 600851475143?',
+      preparationDuration: preparation
     });
+
+    // wait 1 more second.
+    setTimeout(function () {
+      verbose('emit game/start!');
+      game.room.emit('game/start');
+    }, 1000 * (preparation + 1));
   }
 }
 
