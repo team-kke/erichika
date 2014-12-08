@@ -1,12 +1,21 @@
+@-webkit-keyframes blink {
+  50% { background: rgba(223, 40, 88, 1); color: @whiter; }
+}
+
+@keyframes blink {
+  50% { background: rgba(223, 40, 88, 1); color: @whiter; }
+}
+
 ul.user-list {
   margin: 0;
   padding: 0;
-  height: 58px;
+  height: 54px;
   background-color: @whiter;
   overflow: hidden;
 
   li.user {
-    display: inline-block;
+    display: block;
+    float: left;
     width: 50%;
     height: 27px;
     box-sizing: border-box;
@@ -22,6 +31,10 @@ ul.user-list {
       color: @green;
     }
 
+    &.current {
+      .animation(blink, 1.5s, infinite, ease);
+    }
+
     &:hover {
       background-color: @lightblue;
     }
@@ -34,7 +47,7 @@ ul.user-list {
   ul.log {
     margin: 0;
     padding: 0;
-    height: 460px;
+    height: 464px;
     background-color: @whiter;
     overflow-x: hidden;
     overflow-y: auto;
