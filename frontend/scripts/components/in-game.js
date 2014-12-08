@@ -5,6 +5,7 @@ var React = require('react/addons')
   , Ide = require('./ide')
   , InGameChat = require('./in-game-chat')
   , InGameNav = require('./in-game-nav')
+  , Problem = require('./problem')
   , Team = require('../team')
   , moment = require('moment')
   , request = require('superagent');
@@ -16,7 +17,9 @@ var InGameComponent = React.createClass({
       current: this.teams.ours,
       showTestOutput: false,
       testOutput: null,
-      isMyTurn: false
+      isMyTurn: false,
+      showProblem: true,
+      problem: null
     };
   },
   componentDidMount: function () {
@@ -24,6 +27,7 @@ var InGameComponent = React.createClass({
     this.props.socket.on('game/update', this.update);
     this.props.socket.on('game/chat', this.updateChat);
     this.props.socket.on('game/code', this.updateCode);
+    this.props.socket.on('game/problem', this.updateProblem);
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;
@@ -49,17 +53,22 @@ var InGameComponent = React.createClass({
       this.setState({current: this.teams[this.state.current.side]});
     }
   },
+  updateProblem: function (data) {
+    this.setState({problem: data});
+  },
   render: function () {
     var shouldDisableIde = this.state.current.side !== this.teams.ours.side
                            || !this.state.isMyTurn;
     var shouldDisableChat = this.state.current.side !== this.teams.ours.side
                             || this.state.isMyTurn;
+    var navTab = this.state.showProblem ? 'problem' : this.state.current.side;
 
     return (
       <div id='in-game'>
         <div className='content'>
-          <InGameNav runTest={this.runTest} side={this.state.current.side}
-                     switchTeam={this.switchTeam} />
+          <InGameNav runTest={this.runTest} tab={navTab}
+                     switchTeam={this.switchTeam}
+                     showProblem={this.showProblem} />
           <div className='area-left'>
             <InGameChat disable={shouldDisableChat}
                         users={this.state.current.users}
@@ -72,6 +81,8 @@ var InGameComponent = React.createClass({
             <TestOutput show={this.state.showTestOutput}
                         output={this.state.testOutput}
                         close={this.closeTest} />
+            <Problem show={this.state.showProblem}
+                     problem={this.state.problem} />
           </div>
         </div>
       </div>
@@ -90,7 +101,10 @@ var InGameComponent = React.createClass({
       });
   },
   switchTeam: function (side) {
-    this.setState({current: this.teams[side]});
+    this.setState({current: this.teams[side], showProblem: false});
+  },
+  showProblem: function () {
+    this.setState({showProblem: true});
   },
   closeTest: function () {
     this.setState({showTestOutput: false});
