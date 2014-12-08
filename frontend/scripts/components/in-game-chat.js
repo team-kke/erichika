@@ -19,8 +19,12 @@ var UserList = React.createClass({
   },
   renderLogs: function () {
     return this.props.chatLogs.map(function (log) {
+      var classes = React.addons.classSet({
+        me: log.me,
+        notice: log.type === 'notice'
+      });
       return (
-        <li className={log.me ? 'me' : ''}>
+        <li className={classes}>
           <div className='info'>
             <span className='username'>{log.username}</span>
             <span className='datetime'>{log.datetime}</span>
