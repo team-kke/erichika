@@ -56,6 +56,7 @@ Game = function (id, users, room) {
   this.room = room;
   this.turn = 0;
   this.joined = {};
+  this.started = false;
 
   this.timer = new GameTimer(function () {
     updateClient(this);
@@ -86,7 +87,7 @@ Game.prototype.ours = function (whose) {
 
   team.users.forEach(function (user, index) {
     user.me = user.username === whose.username;
-    user.current = this.turn % team.users.length === index;
+    user.current = this.started && (this.turn % team.users.length === index);
   }.bind(this));
 
   return team;
@@ -105,7 +106,7 @@ Game.prototype.opponents = function (whose) {
 
   team.users.forEach(function (user, index) {
     user.me = false;
-    user.current = this.turn % team.users.length === index;
+    user.current = this.started && (this.turn % team.users.length === index);
   }.bind(this));
 
   return team;
@@ -149,6 +150,7 @@ Game.prototype.isEveryoneJoined = function () {
 
 Game.prototype.start = function () {
   verbose('emit game/start!');
+  this.started = true;
   this.room.emit('game/start');
   this.timer.fire();
 };
