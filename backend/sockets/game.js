@@ -3,13 +3,13 @@
 var error = require('debug')('error');
 var generate = require('./base');
 var problemSet = require('./problem-set');
+var GameTimer = require('./game-timer');
 var verbose = require('debug')('verbose:game');
 
 var games = {};
 var incrementId = 0;
 
 // constants
-var TurnLength = 15; // in seconds
 var TeamSize = 3;
 var NumberOfTeam = 2;
 
@@ -57,31 +57,10 @@ Game = function (id, users, room) {
   this.turn = 0;
   this.joined = {};
 
-  function Timer(game) {
-    this.game = game;
-    this.handle = null;
-  }
-
-  Timer.prototype.fire = function () {
-    if (this.handle !== null) {
-      this.clear();
-    }
-    this.handle = setInterval(this.tick.bind(this), 1000);
-  };
-
-  Timer.prototype.tick = function () {
-    updateClient(this.game);
-    this.game.turn++;
-  };
-
-  Timer.prototype.clear = function () {
-    if (this.handle !== null) {
-      clearInterval(this.handle);
-      this.handle = null;
-    }
-  };
-
-  this.timer = new Timer(this);
+  this.timer = new GameTimer(function () {
+    updateClient(this);
+    this.turn++;
+  }.bind(this));
 };
 
 Game.prototype.sockets = function () {
@@ -107,7 +86,7 @@ Game.prototype.ours = function (whose) {
 
   team.users.forEach(function (user, index) {
     user.me = user.username === whose.username;
-    user.current = this.timer.turn % team.users.length === index;
+    user.current = this.turn % team.users.length === index;
   }.bind(this));
 
   return team;
@@ -126,7 +105,7 @@ Game.prototype.opponents = function (whose) {
 
   team.users.forEach(function (user, index) {
     user.me = false;
-    user.current = this.timer.turn % team.users.length === index;
+    user.current = this.turn % team.users.length === index;
   }.bind(this));
 
   return team;
@@ -168,6 +147,12 @@ Game.prototype.isEveryoneJoined = function () {
   return Object.keys(this.joined).length === this.sockets().length;
 };
 
+Game.prototype.start = function () {
+  verbose('emit game/start!');
+  this.room.emit('game/start');
+  this.timer.fire();
+};
+
 function sendNotice(game, text) {
   game.sockets().forEach(function (socket) {
     socket.emit('game/chat', {
@@ -175,14 +160,6 @@ function sendNotice(game, text) {
       chat: { type: 'notice', text: text }
     });
   });
-}
-
-function startGame(game) {
-  return function () {
-    verbose('emit game/start!');
-    game.room.emit('game/start');
-    game.timer.fire();
-  };
 }
 
 function didJoin() {
@@ -196,7 +173,7 @@ function didJoin() {
     game.room.emit('game/problem', problem);
     sendNotice(game, 'Game begins in ' + problem.preparationDuration + 's.');
     // wait 1 more second and start a game.
-    setTimeout(startGame(game), 1000 * (problem.preparationDuration + 1));
+    setTimeout(game.start.bind(game), 1000 * (problem.preparationDuration + 1));
   }
 }
 
