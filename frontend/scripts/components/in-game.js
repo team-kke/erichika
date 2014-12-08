@@ -12,7 +12,12 @@ var React = require('react/addons')
 var InGameComponent = React.createClass({
   teams: {ours: new Team('ours'), opponents: new Team('opponents')},
   getInitialState: function () {
-    return {current: this.teams.ours, showTestOutput: false, testOutput: null};
+    return {
+      current: this.teams.ours,
+      showTestOutput: false,
+      testOutput: null,
+      isMyTurn: false
+    };
   },
   componentDidMount: function () {
     this.props.socket.emit('game/didJoin');
@@ -23,7 +28,12 @@ var InGameComponent = React.createClass({
   update: function (data) {
     this.teams.ours.users = data.ours.users;
     this.teams.opponents.users = data.opponents.users;
-    this.setState({current: this.teams[this.state.current.side]});
+    this.setState({
+      current: this.teams[this.state.current.side],
+      isMyTurn: data.ours.users.filter(function (user) {
+        return user.me && user.current;
+      }).length > 0
+    });
   },
   updateChat: function (data) {
     data.chat.datetime = moment().format('h:mm A');
@@ -40,18 +50,25 @@ var InGameComponent = React.createClass({
     }
   },
   render: function () {
+    var shouldDisableIde = this.state.current.side !== this.teams.ours.side
+                           || !this.state.isMyTurn;
+    var shouldDisableChat = this.state.current.side !== this.teams.ours.side
+                            || this.state.isMyTurn;
+
     return (
       <div id='in-game'>
         <div className='content'>
           <InGameNav runTest={this.runTest} side={this.state.current.side}
                      switchTeam={this.switchTeam} />
           <div className='area-left'>
-            <InGameChat users={this.state.current.users}
+            <InGameChat disable={shouldDisableChat}
+                        users={this.state.current.users}
                         chatLogs={this.state.current.chatLogs}
                         chatHandler={this.sendChat} />
           </div>
           <div className='area-right'>
-            <Ide code={this.state.current.code} onChange={this.onIdeChange} />
+            <Ide disable={shouldDisableIde}
+                 code={this.state.current.code} onChange={this.onIdeChange} />
             <TestOutput show={this.state.showTestOutput}
                         output={this.state.testOutput}
                         close={this.closeTest} />

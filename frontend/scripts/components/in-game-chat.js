@@ -31,6 +31,8 @@ var UserList = React.createClass({
     });
   },
   render: function () {
+    var placeholderText = this.props.disable ? "You can't chat now!"
+                                             : "Say hello!";
     return (
       <div>
         <ul className='user-list'>
@@ -41,7 +43,8 @@ var UserList = React.createClass({
             {this.renderLogs()}
           </ul>
           <input ref='chatInput' className='chat-input' type='text'
-                 placeholder='Say hello!' onKeyUp={this.onKeyUp}/>
+                 placeholder={placeholderText} onKeyUp={this.onKeyUp}
+                 disabled={this.props.disable} />
         </div>
       </div>
     );

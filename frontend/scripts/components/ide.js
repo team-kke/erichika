@@ -11,6 +11,7 @@ var IdeComponent = React.createClass({
   componentDidMount: function () {
     this.editor = ace.edit(this.refs.ide.getDOMNode());
     this.editor.setTheme('ace/theme/tomorrow');
+    this.editor.setReadOnly(this.props.disable);
 
     var session = this.editor.getSession();
     session.setMode('ace/mode/javascript');
@@ -22,6 +23,7 @@ var IdeComponent = React.createClass({
     if (this.editor) {
       this.editor.setValue(this.props.code);
       this.editor.clearSelection();
+      this.editor.setReadOnly(this.props.disable);
     }
   },
   render: function () {
