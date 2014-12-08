@@ -12,6 +12,7 @@
     "spaced-line-comment": [2, "always"],
     "radix": [2, "always"],
     "key-spacing": [2, "always", {"beforeColon": false, "afterColon": true}],
-    "no-multiple-empty-lines": [2, {max: 1}]
+    "no-multiple-empty-lines": [2, {max: 1}],
+    "no-multi-str": false
   }
 }
