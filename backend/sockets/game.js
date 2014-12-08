@@ -12,7 +12,31 @@ var TurnLength = 15; // in seconds
 var TeamSize = 3;
 var NumberOfTeam = 2;
 
-function Game(id, users, room) {
+// FIXME: due to circuler reference between updateClient and Game, Game is forward-declared.
+var Game;
+
+function updateClient(game, socket) {
+  if (!game instanceof Game) {
+    error('game.js, updateClient, check arguments');
+  }
+
+  verbose('game/update');
+
+  var update = function (target) {
+    target.emit('game/update', {
+      ours: game.ours(target),
+      opponents: game.opponents(target)
+    });
+  };
+
+  if (socket) {
+    update(socket);
+  } else {
+    game.sockets().forEach(update);
+  }
+}
+
+Game = function (id, users, room) {
   verbose('Game() constructor called with users: [%s]', users.map(function (user) {
     return user.username;
   }));
@@ -43,7 +67,9 @@ function Game(id, users, room) {
     }
     this.handle = setInterval(this.tick, 1000);
   };
+
   Timer.prototype.tick = function () {
+    updateClient(this.game);
     this.game.turn++;
   };
 
@@ -55,7 +81,7 @@ function Game(id, users, room) {
   };
 
   this.timer = new Timer(this);
-}
+};
 
 Game.prototype.sockets = function () {
   return this.room.sockets;
@@ -78,9 +104,9 @@ Game.prototype.ours = function (whose) {
     return null;
   }
 
-  team.users.forEach(function (user) {
-    // TODO: check 'current' true
+  team.users.forEach(function (user, index) {
     user.me = user.username === whose.username;
+    user.current = this.timer.turn % TeamSize === index;
   });
 
   return team;
@@ -97,9 +123,9 @@ Game.prototype.opponents = function (whose) {
     return null;
   }
 
-  team.users.forEach(function (user) {
-    // TODO: check 'current' true
+  team.users.forEach(function (user, index) {
     user.me = false;
+    user.current = this.timer.turn % TeamSize === index;
   });
 
   return team;
@@ -141,27 +167,6 @@ Game.prototype.isEveryoneJoined = function () {
   return Object.keys(this.joined).length === this.sockets().length;
 };
 
-function updateClient(game, socket) {
-  if (!game instanceof Game) {
-    error('game.js, updateClient, check arguments');
-  }
-
-  verbose('game/update');
-
-  var update = function (target) {
-    target.emit('game/update', {
-      ours: game.ours(target),
-      opponents: game.opponents(target)
-    });
-  };
-
-  if (socket) {
-    update(socket);
-  } else {
-    game.sockets().forEach(update);
-  }
-}
-
 function sendNotice(game, text) {
   game.sockets().forEach(function (socket) {
     socket.emit('game/chat', {
@@ -175,6 +180,7 @@ function startGame(game) {
   return function () {
     verbose('emit game/start!');
     game.room.emit('game/start');
+    game.timer.fire();
   };
 }
 
