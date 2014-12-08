@@ -2,6 +2,7 @@
 
 var error = require('debug')('error');
 var generate = require('./base');
+var problemSet = require('./problem-set');
 var verbose = require('debug')('verbose:game');
 
 var games = {};
@@ -184,15 +185,6 @@ function startGame(game) {
   };
 }
 
-function getProblem() {
-  var preparationDuration = 5;
-  return {
-    title: 'Largest prime factor',
-    description: 'What is the largest prime factor of the number 600851475143?',
-    preparationDuration: preparationDuration
-  };
-}
-
 function didJoin() {
   verbose('game/didJoin');
   var game = games[this.socket.gid];
@@ -200,7 +192,7 @@ function didJoin() {
   updateClient(game, this.socket);
   if (game.isEveryoneJoined()) {
     verbose('everyone joined! emit game/problem');
-    var problem = getProblem();
+    var problem = problemSet.getOne();
     game.room.emit('game/problem', problem);
     sendNotice(game, 'Game begins in ' + problem.preparationDuration + 's.');
     // wait 1 more second and start a game.
