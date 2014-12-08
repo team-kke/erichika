@@ -57,6 +57,7 @@ Game = function (id, users, room) {
   this.turn = 0;
   this.joined = {};
   this.started = false;
+  this.problem = problemSet.getOne();
 
   this.timer = new GameTimer(function () {
     updateClient(this);
@@ -177,11 +178,10 @@ function didJoin() {
   updateClient(game, this.socket);
   if (game.isEveryoneJoined()) {
     verbose('everyone joined! emit game/problem');
-    var problem = problemSet.getOne();
-    game.room.emit('game/problem', problem);
-    sendNotice(game, 'Game begins in ' + problem.preparationDuration + 's.');
+    game.room.emit('game/problem', game.problem);
+    sendNotice(game, 'Game begins in ' + game.problem.preparationDuration + 's.');
     // wait 1 more second and start a game.
-    setTimeout(game.start.bind(game), 1000 * (problem.preparationDuration + 1));
+    setTimeout(game.start.bind(game), 1000 * (game.problem.preparationDuration + 1));
   }
 }
 
@@ -222,12 +222,22 @@ function submit(data) {
     return;
   }
 
-  // FIXME: dummy code
-  game.ours(this.socket).users.forEach(function (user) {
-    game.socket(user).emit('game/chat', {
-      side: 'ours',
-      chat: { type: 'notice', text: 'Wrong answer!' }
-    });
+  problemSet.validation(game.problem, data.code, function (valid) {
+    if (valid) {
+      game.ours(this.socket).users.forEach(function (user) {
+        game.socket(user).emit('game/win');
+      });
+      game.opponents(this.socket).users.forEach(function (user) {
+        game.socket(user).emit('game/lose');
+      });
+    } else {
+      game.ours(this.socket).users.forEach(function (user) {
+        game.socket(user).emit('game/chat', {
+          side: 'ours',
+          chat: { type: 'notice', text: 'Wrong answer!' }
+        });
+      });
+    }
   });
 }
 
