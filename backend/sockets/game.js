@@ -119,10 +119,11 @@ Game.prototype.socket = function (whose) {
   })[0];
 };
 
-Game.prototype.user = function (socket) {
-  return this.team[0].users.concat(this.team[1].users).filter(function (user) {
-    return user.username === socket.username;
-  })[0];
+Game.prototype.isCurrent = function (user) {
+  var team = this.ours(user);
+  // turn - 1 : current user, as it's been increased
+  var currentUser = team.users[this.turn - 1 % team.users.length];
+  return this.started && currentUser.username === user.username;
 };
 
 Game.prototype.broadcast = function (from, eventName, data, postProcess,
@@ -206,7 +207,7 @@ function didJoin() {
 function chat(data) {
   verbose('game/chat');
   var game = games[this.socket.gid];
-  if (game.user(this.socket).current) {
+  if (game.isCurrent(this.socket)) {
     verbose('ignore game/chat from current user');
     return;
   }
@@ -225,7 +226,7 @@ function chat(data) {
 function code(data) {
   verbose('game/code');
   var game = games[this.socket.gid];
-  if (!game.user(this.socket).current) {
+  if (!game.isCurrent(this.socket)) {
     verbose('ignore game/code from non-current user');
     return;
   }
@@ -235,7 +236,7 @@ function code(data) {
 function submit(data) {
   verbose('game/submit');
   var game = games[this.socket.gid];
-  if (!game.user(this.socket).current) {
+  if (!game.isCurrent(this.socket)) {
     verbose('ignore game/submit from non-current user');
     return;
   }
