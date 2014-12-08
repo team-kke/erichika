@@ -119,9 +119,9 @@ Game.prototype.socket = function (whose) {
 };
 
 Game.prototype.user = function (socket) {
-  this.team[0].users.concat(this.team[1].users).find(function (user) {
+  return this.team[0].users.concat(this.team[1].users).filter(function (user) {
     return user.username === socket.username;
-  });
+  })[0];
 };
 
 Game.prototype.broadcast = function (from, eventName, data, postProcess,
