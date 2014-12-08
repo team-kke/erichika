@@ -38,9 +38,30 @@
 
     &.submit {
       color: @green;
+      position: relative;
+
+      .cant {
+        .opacity(0);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+      }
+
       &:hover {
         color: @whiter;
         background-color: @green;
+      }
+
+      &.disable:hover {
+        .text {
+          .opacity(0);
+        }
+        .cant {
+          .opacity(1);
+        }
+        background-color: @red;
       }
     }
   }

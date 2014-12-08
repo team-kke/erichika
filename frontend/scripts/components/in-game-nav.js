@@ -16,6 +16,10 @@ var InGameNavComponent = React.createClass({
       'button left': true,
       'current': this.props.tab === 'problem'
     });
+    var submitClassName = React.addons.classSet({
+      'button right submit': true,
+      'disable': this.props.disableSubmit
+    });
     return (
       <div className='nav'>
         <a className={oursClassName} href='#'
@@ -24,9 +28,12 @@ var InGameNavComponent = React.createClass({
            onClick={this.switchToOpponents}>Opponents&rsquo;</a>
         <a className={problemClassName} href='#'
            onClick={this.showProblem}>Problem</a>
-        <a className='button right submit' href='#'>Submit</a>
+        <a className={submitClassName} href='#' onClick={this.submit}>
+           <span className='text'>Submit</span>
+           <span className='cant'>Can&rsquo;t</span>
+        </a>
         <a className='button right console' href='#'
-           onClick={this.props.runTest}>Test</a>
+           onClick={this.runTest}>Test</a>
       </div>
     );
   },
@@ -40,6 +47,16 @@ var InGameNavComponent = React.createClass({
   },
   showProblem: function (e) {
     this.props.showProblem();
+    e.preventDefault();
+  },
+  runTest: function (e) {
+    this.props.runTest();
+    e.preventDefault();
+  },
+  submit: function (e) {
+    if (!this.props.disableSubmit) {
+      this.props.submit();
+    }
     e.preventDefault();
   }
 });

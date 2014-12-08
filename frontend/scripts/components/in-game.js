@@ -71,6 +71,7 @@ var InGameComponent = React.createClass({
                            || !this.state.isMyTurn;
     var shouldDisableChat = this.state.current.side !== this.teams.ours.side
                             || this.state.isMyTurn;
+    var shouldDisableSubmit = !this.state.isMyTurn;
     var navTab = this.state.showProblem ? 'problem' : this.state.current.side;
 
     return (
@@ -78,7 +79,8 @@ var InGameComponent = React.createClass({
         <div className='content'>
           <InGameNav runTest={this.runTest} tab={navTab}
                      switchTo={this.switchTo}
-                     showProblem={this.showProblem} />
+                     showProblem={this.showProblem}
+                     submit={this.submit} disableSubmit={shouldDisableSubmit} />
           <div className='area-left'>
             <InGameChat disable={shouldDisableChat}
                         users={this.state.current.users}
@@ -115,6 +117,9 @@ var InGameComponent = React.createClass({
   },
   showProblem: function () {
     this.setState({showProblem: true});
+  },
+  submit: function () {
+    this.props.socket.emit('game/submit', {code: code});
   },
   closeTest: function () {
     this.setState({showTestOutput: false});
