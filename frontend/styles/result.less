@@ -1,0 +1,32 @@
+& {
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  cursor: default;
+
+  .result {
+    width: 800px;
+    height: 600px;
+    margin: 30px auto;
+    background-color: @whiter;
+    .opacity(.7);
+
+    .text {
+      position: absolute;
+      top: 50%;
+      font-weight: 100;
+      font-size: 100px;
+      width: 800px;
+      text-align: center;
+      .transform(translateY(-50%));
+    }
+
+    &.win {
+      color: @green;
+    }
+    &.lose {
+      color: @red;
+    }
+  }
+}

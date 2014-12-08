@@ -3,6 +3,7 @@
 var React = require('react/addons')
   , InGame = require('./in-game')
   , Lobby = require('./lobby')
+  , Result = require('./result')
   , Socket = require('../socket');
 
 var
@@ -13,7 +14,7 @@ var
 var GameComponent = React.createClass({
   socket: new Socket(),
   getInitialState: function () {
-    return {gameState: GameStateNormal};
+    return {gameState: GameStateNormal, showResult: false, win: false};
   },
   componentDidMount: function () {
     var that = this;
@@ -24,19 +25,28 @@ var GameComponent = React.createClass({
     this.socket.on('game/join', function () {
       that.setState({gameState: GameStateInGame});
     });
-    this.socket.on('game/exit', function () {
-      that.setState({gameState: GameStateLobby});
-    });
   },
   render: function () {
     switch (this.state.gameState) {
     case GameStateNormal:
       return null;
     case GameStateLobby:
-      return <Lobby socket={this.socket} />;
+      return (
+        <div>
+          <Result show={this.state.showResult} win={this.state.win} />
+          <Lobby socket={this.socket} />
+        </div>
+      );
     case GameStateInGame:
-      return <InGame socket={this.socket} />;
+      return <InGame socket={this.socket} onResult={this.showGameResult} />;
     }
+  },
+  showGameResult: function (win) {
+    that.setState({
+      gameState: GameStateLobby,
+      showResult: true,
+      win: win
+    });
   }
 });
 

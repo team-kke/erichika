@@ -69,10 +69,10 @@ var InGameComponent = React.createClass({
     this.switchTo('ours');
   },
   win: function () {
-    console.log('win!');
+    this.props.onResult(true);
   },
   lose: function () {
-    console.log('lose!');
+    this.props.onResult(false);
   },
   render: function () {
     var shouldDisableIde = this.state.current.side !== this.teams.ours.side
