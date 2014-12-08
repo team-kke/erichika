@@ -12,7 +12,11 @@ router.get('/', function (req, res) {
 });
 
 router.post('/login', function (req, res) {
-  // TODO: check if login information is valid
+  if (!req.body.username) {
+    res.redirect('/');
+    return;
+  }
+
   var valid = true;
   if (valid) {
     req.session.username = req.body.username;
