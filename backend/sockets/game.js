@@ -118,6 +118,12 @@ Game.prototype.socket = function (whose) {
   })[0];
 };
 
+Game.prototype.user = function (socket) {
+  this.team[0].users.concat(this.team[1].users).find(function (user) {
+    return user.username === socket.username;
+  });
+};
+
 Game.prototype.broadcast = function (from, eventName, data, postProcess,
                                      exceptForMe) {
   var that = this;
@@ -182,6 +188,11 @@ function didJoin() {
 function chat(data) {
   verbose('game/chat');
   var game = games[this.socket.gid];
+  if (game.user(this.socket).current) {
+    verbose('ignore game/chat from current user');
+    return;
+  }
+
   game.broadcast(this.socket, 'game/chat', {
     chat: {
       type: 'normal',
@@ -196,14 +207,22 @@ function chat(data) {
 function code(data) {
   verbose('game/code');
   var game = games[this.socket.gid];
+  if (!game.user(this.socket).current) {
+    verbose('ignore game/code from non-current user');
+    return;
+  }
   game.broadcast(this.socket, 'game/code', {code: data.code}, null, true);
 }
 
 function submit(data) {
   verbose('game/submit');
+  var game = games[this.socket.gid];
+  if (!game.user(this.socket).current) {
+    verbose('ignore game/submit from non-current user');
+    return;
+  }
 
   // FIXME: dummy code
-  var game = games[this.socket.gid];
   game.ours(this.socket).users.forEach(function (user) {
     game.socket(user).emit('game/chat', {
       side: 'ours',
