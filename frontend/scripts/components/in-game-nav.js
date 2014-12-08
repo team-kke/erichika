@@ -31,11 +31,11 @@ var InGameNavComponent = React.createClass({
     );
   },
   switchToOurs: function (e) {
-    this.props.switchTeam('ours');
+    this.props.switchTo('ours');
     e.preventDefault();
   },
   switchToOpponents: function (e) {
-    this.props.switchTeam('opponents');
+    this.props.switchTo('opponents');
     e.preventDefault();
   },
   showProblem: function (e) {

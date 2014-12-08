@@ -28,16 +28,23 @@ var InGameComponent = React.createClass({
     this.props.socket.on('game/chat', this.updateChat);
     this.props.socket.on('game/code', this.updateCode);
     this.props.socket.on('game/problem', this.updateProblem);
+    this.props.socket.on('game/start', this.start);
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;
     this.teams.opponents.users = data.opponents.users;
+    var isMyTurn = data.ours.users.filter(function (user) {
+      return user.me && user.current;
+    }).length > 0;
+
     this.setState({
       current: this.teams[this.state.current.side],
-      isMyTurn: data.ours.users.filter(function (user) {
-        return user.me && user.current;
-      }).length > 0
+      isMyTurn: isMyTurn
     });
+
+    if (isMyTurn) {
+      this.switchTo('ours');
+    }
   },
   updateChat: function (data) {
     data.chat.datetime = moment().format('h:mm A');
@@ -56,6 +63,9 @@ var InGameComponent = React.createClass({
   updateProblem: function (data) {
     this.setState({problem: data});
   },
+  start: function () {
+    this.switchTo('ours');
+  },
   render: function () {
     var shouldDisableIde = this.state.current.side !== this.teams.ours.side
                            || !this.state.isMyTurn;
@@ -67,7 +77,7 @@ var InGameComponent = React.createClass({
       <div id='in-game'>
         <div className='content'>
           <InGameNav runTest={this.runTest} tab={navTab}
-                     switchTeam={this.switchTeam}
+                     switchTo={this.switchTo}
                      showProblem={this.showProblem} />
           <div className='area-left'>
             <InGameChat disable={shouldDisableChat}
@@ -100,7 +110,7 @@ var InGameComponent = React.createClass({
         }
       });
   },
-  switchTeam: function (side) {
+  switchTo: function (side) {
     this.setState({current: this.teams[side], showProblem: false});
   },
   showProblem: function () {
