@@ -162,6 +162,16 @@ Game.prototype.start = function () {
   this.timer.fire();
 };
 
+Game.prototype.end = function (terminator) {
+  this.timer.clear();
+  this.ours(terminator).users.forEach(function (user) {
+    this.socket(user).emit('game/win');
+  }.bind(this));
+  this.opponents(terminator).users.forEach(function (user) {
+    this.socket(user).emit('game/lose');
+  }.bind(this));
+};
+
 function sendNotice(game, text) {
   game.sockets().forEach(function (socket) {
     socket.emit('game/chat', {
@@ -224,12 +234,7 @@ function submit(data) {
 
   problemSet.validation(game.problem, data.code, function (valid) {
     if (valid) {
-      game.ours(this.socket).users.forEach(function (user) {
-        game.socket(user).emit('game/win');
-      });
-      game.opponents(this.socket).users.forEach(function (user) {
-        game.socket(user).emit('game/lose');
-      });
+      game.end(this.socket);
     } else {
       game.ours(this.socket).users.forEach(function (user) {
         game.socket(user).emit('game/chat', {
@@ -238,7 +243,7 @@ function submit(data) {
         });
       });
     }
-  });
+  }.bind(this));
 }
 
 module.exports = generate({

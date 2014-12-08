@@ -29,6 +29,8 @@ var InGameComponent = React.createClass({
     this.props.socket.on('game/code', this.updateCode);
     this.props.socket.on('game/problem', this.updateProblem);
     this.props.socket.on('game/start', this.start);
+    this.props.socket.on('game/win', this.win);
+    this.props.socket.on('game/lose', this.lose);
   },
   update: function (data) {
     this.teams.ours.users = data.ours.users;
@@ -65,6 +67,12 @@ var InGameComponent = React.createClass({
   },
   start: function () {
     this.switchTo('ours');
+  },
+  win: function () {
+    console.log('win!');
+  },
+  lose: function () {
+    console.log('lose!');
   },
   render: function () {
     var shouldDisableIde = this.state.current.side !== this.teams.ours.side
