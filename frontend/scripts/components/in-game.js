@@ -43,7 +43,8 @@ var InGameComponent = React.createClass({
     return (
       <div id='in-game'>
         <div className='content'>
-          <InGameNav runTest={this.runTest} />
+          <InGameNav runTest={this.runTest} side={this.state.current.side}
+                     switchTeam={this.switchTeam} />
           <div className='area-left'>
             <InGameChat users={this.state.current.users}
                         chatLogs={this.state.current.chatLogs}
@@ -70,6 +71,9 @@ var InGameComponent = React.createClass({
           that.setState({showTestOutput: true, testOutput: res.body});
         }
       });
+  },
+  switchTeam: function (side) {
+    this.setState({current: this.teams[side]});
   },
   closeTest: function () {
     this.setState({showTestOutput: false});
