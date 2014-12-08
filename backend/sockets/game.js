@@ -228,10 +228,24 @@ function code(data) {
   game.broadcast(this.socket, 'game/code', {code: data.code}, null, true);
 }
 
+function submit(data) {
+  verbose('game/submit');
+
+  // FIXME: dummy code
+  var game = games[this.socket.gid];
+  game.ours(this.socket).users.forEach(function (user) {
+    game.socket(user).emit('game/chat', {
+      side: 'ours',
+      chat: { type: 'notice', text: 'Wrong answer!' }
+    });
+  });
+}
+
 module.exports = generate({
   'game/didJoin': { name: 'didJoin', function: didJoin },
   'game/chat': { name: 'chat', function: chat },
-  'game/code': { name: 'code', function: code }
+  'game/code': { name: 'code', function: code },
+  'game/submit': { name: 'submit', function: submit }
 });
 
 function enterGame(context) {
