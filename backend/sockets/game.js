@@ -122,7 +122,10 @@ Game.prototype.socket = function (whose) {
 Game.prototype.isCurrent = function (user) {
   var team = this.ours(user);
   // turn - 1 : current user, as it's been increased
-  var currentUser = team.users[this.turn - 1 % team.users.length];
+  var currentUser = team.users[(this.turn - 1) % team.users.length];
+  if (!currentUser) {
+    error('Game.isCurrent(), currentUser: %s', currentUser);
+  }
   return this.started && currentUser.username === user.username;
 };
 
