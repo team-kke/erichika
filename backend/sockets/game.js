@@ -65,7 +65,7 @@ Game = function (id, users, room) {
     if (this.handle !== null) {
       this.clear();
     }
-    this.handle = setInterval(this.tick, 1000);
+    this.handle = setInterval(this.tick.bind(this), 1000);
   };
 
   Timer.prototype.tick = function () {
@@ -106,8 +106,8 @@ Game.prototype.ours = function (whose) {
 
   team.users.forEach(function (user, index) {
     user.me = user.username === whose.username;
-    user.current = this.timer.turn % TeamSize === index;
-  });
+    user.current = this.timer.turn % team.users.length === index;
+  }.bind(this));
 
   return team;
 };
@@ -125,8 +125,8 @@ Game.prototype.opponents = function (whose) {
 
   team.users.forEach(function (user, index) {
     user.me = false;
-    user.current = this.timer.turn % TeamSize === index;
-  });
+    user.current = this.timer.turn % team.users.length === index;
+  }.bind(this));
 
   return team;
 };
