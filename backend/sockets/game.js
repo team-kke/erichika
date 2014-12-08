@@ -154,6 +154,22 @@ function updateClient(game, socket) {
   }
 }
 
+function startGame(game) {
+  return function () {
+    verbose('emit game/start!');
+    game.room.emit('game/start');
+  };
+}
+
+function getProblem() {
+  var preparationDuration = 5;
+  return {
+    title: 'Largest prime factor',
+    description: 'What is the largest prime factor of the number 600851475143?',
+    preparationDuration: preparationDuration
+  };
+}
+
 function didJoin() {
   verbose('game/didJoin');
   var game = games[this.socket.gid];
@@ -161,18 +177,11 @@ function didJoin() {
   updateClient(game, this.socket);
   if (game.isEveryoneJoined()) {
     verbose('everyone joined! emit game/problem');
-    var preparation = 5;
-    game.room.emit('game/problem', {
-      title: 'Largest prime factor',
-      description: 'What is the largest prime factor of the number 600851475143?',
-      preparationDuration: preparation
-    });
+    var problem = getProblem();
+    game.room.emit('game/problem', problem);
 
-    // wait 1 more second.
-    setTimeout(function () {
-      verbose('emit game/start!');
-      game.room.emit('game/start');
-    }, 1000 * (preparation + 1));
+    // wait 1 more second and start a game.
+    setTimeout(startGame(game), 1000 * (problem.preparationDuration + 1));
   }
 }
 
@@ -201,7 +210,7 @@ module.exports = generate({
   'game/code': { name: 'code', function: code }
 });
 
-function startGame(context) {
+function enterGame(context) {
   var game = new Game(incrementId, context.team.members.map(function (username) {
     return {
       username: username,
@@ -219,4 +228,4 @@ function startGame(context) {
   games[incrementId++] = game;
 }
 
-module.exports.start = startGame;
+module.exports.start = enterGame;
