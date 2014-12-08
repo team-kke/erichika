@@ -21,8 +21,8 @@ function Game(id, users, room) {
     { users: users }
   ];
   this.room = room;
-
   this.turn = 0;
+  this.joined = {};
 
   function Timer(game) {
     this.game = game;
@@ -124,6 +124,15 @@ Game.prototype.broadcast = function (from, eventName, data, postProcess,
   this.opponents(from).users.forEach(handlerFactory('opponents'));
 };
 
+Game.prototype.userJoined = function (socket) {
+  verbose('user(%s) didJoin', socket.username);
+  this.joined[socket.username] = true;
+};
+
+Game.prototype.isEveryoneJoined = function () {
+  return Object.keys(this.joined).length === this.sockets().length;
+};
+
 function updateClient(game, socket) {
   if (!game instanceof Game) {
     error('game.js, updateClient, check arguments');
@@ -147,7 +156,16 @@ function updateClient(game, socket) {
 
 function didJoin() {
   verbose('game/didJoin');
-  updateClient(games[this.socket.gid], this.socket);
+  var game = games[this.socket.gid];
+  game.userJoined(this.socket);
+  updateClient(game, this.socket);
+  if (game.isEveryoneJoined()) {
+    verbose('everyone joined! emit game/problem');
+    game.room.emit('game/problem', {
+      title: 'Largest prime factor',
+      description: 'What is the largest prime factor of the number 600851475143?'
+    });
+  }
 }
 
 function chat(data) {
