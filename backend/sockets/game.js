@@ -21,6 +21,32 @@ function Game(id, users, room) {
     { users: users }
   ];
   this.room = room;
+
+  this.turn = 0;
+
+  function Timer(game) {
+    this.game = game;
+    this.handle = null;
+  }
+
+  Timer.prototype.fire = function () {
+    if (this.handle !== null) {
+      this.clear();
+    }
+    this.handle = setInterval(this.tick, 1000);
+  };
+  Timer.prototype.tick = function () {
+    this.game.turn++;
+  };
+
+  Timer.prototype.clear = function () {
+    if (this.handle !== null) {
+      clearInterval(this.handle);
+      this.handle = null;
+    }
+  };
+
+  this.timer = new Timer(this);
 }
 
 Game.prototype.sockets = function () {
