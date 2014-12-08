@@ -154,10 +154,20 @@ function updateClient(game, socket) {
   }
 }
 
-function startGame(game) {
+function sendNotice(game, text) {
+  game.sockets().forEach(function (socket) {
+    socket.emit('game/chat', {
+      side: 'ours',
+      chat: { type: 'notice', text: text }
+    });
+  });
+}
+
+function startGame(game, time) {
   return function () {
     verbose('emit game/start!');
     game.room.emit('game/start');
+    sendNotice(game, 'Game will begin in ' + time + 's.');
   };
 }
 
@@ -181,7 +191,7 @@ function didJoin() {
     game.room.emit('game/problem', problem);
 
     // wait 1 more second and start a game.
-    setTimeout(startGame(game), 1000 * (problem.preparationDuration + 1));
+    setTimeout(startGame(game, problem.preparationDuration), 1000 * (problem.preparationDuration + 1));
   }
 }
 
@@ -190,6 +200,7 @@ function chat(data) {
   var game = games[this.socket.gid];
   game.broadcast(this.socket, 'game/chat', {
     chat: {
+      type: 'normal',
       username: this.socket.username,
       text: data.text
     }
