@@ -164,12 +164,20 @@ Game.prototype.start = function () {
 
 Game.prototype.end = function (terminator) {
   this.timer.clear();
+
+  var socket;
   this.ours(terminator).users.forEach(function (user) {
-    this.socket(user).emit('game/win');
+    socket = this.socket(user);
+    socket.emit('game/win');
+    this.room.leave(socket);
   }.bind(this));
   this.opponents(terminator).users.forEach(function (user) {
-    this.socket(user).emit('game/lose');
+    socket = this.socket(user);
+    socket.emit('game/lose');
+    this.room.leave(socket);
   }.bind(this));
+
+  delete games[this.id];
 };
 
 function sendNotice(game, text) {
