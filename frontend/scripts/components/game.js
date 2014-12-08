@@ -42,7 +42,7 @@ var GameComponent = React.createClass({
     }
   },
   showGameResult: function (win) {
-    that.setState({
+    this.setState({
       gameState: GameStateLobby,
       showResult: true,
       win: win
